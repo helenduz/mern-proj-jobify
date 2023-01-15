@@ -32,6 +32,7 @@ const AppProvider = ({ children }) => {
     };
 
     return (
+        // expand the state obj appInfo so that we can directly access fields in the consumers
         <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert}}>
             <DispatchContext.Provider value={dispatch}>
             {children}
