@@ -4,6 +4,8 @@ const app = express();
 import * as dotenv from 'dotenv';
 dotenv.config()
 
+import connectDB from './db/connect.js';
+
 import errorHandlerMiddleware from './middleware/error-handler.js';
 import notFoundMiddleware from './middleware/not-found.js';
 
@@ -18,4 +20,14 @@ app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 5000;
 
-app.listen(port, () => {console.log(`Hello there! I'm running on port ${port}!`)});
+// only spins up server if connection to DB is successful!
+const start = async () => {
+ try {
+    await connectDB(process.env.MONGO_URI);
+    app.listen(port, () => {console.log(`Hello there! I'm running on port ${port}!`)});
+ } catch (error) {
+    console.log(error);
+ }
+};
+
+start();
