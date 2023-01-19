@@ -6,16 +6,21 @@ dotenv.config()
 
 import connectDB from './db/connect.js';
 
+// routers
+import authRouter from './routes/authRoutes.js';
+
+// app-level middlewares
 import errorHandlerMiddleware from './middleware/error-handler.js';
 import notFoundMiddleware from './middleware/not-found.js';
 
+
+// request handling chain
 app.get('/', (req, res) => {
     // throw new Error('This is the message that prints to the console');
     res.send('Welcome!');
 });
-
+app.use('/api/v1/auth', authRouter);
 app.use(notFoundMiddleware);
-// if a error handling function (i.e. 4 args) is placed last then all errors thrown in request handling process will be sent to that middleware fn (?)
 app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 5000;
