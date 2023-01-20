@@ -1,5 +1,6 @@
 import express from 'express';
 const app = express();
+import 'express-async-errors';
 
 import * as dotenv from 'dotenv';
 dotenv.config()
@@ -16,6 +17,7 @@ import notFoundMiddleware from './middleware/not-found.js';
 
 
 // request handling chain
+app.use(express.json());
 app.get('/', (req, res) => {
     // throw new Error('This is the message that prints to the console');
     res.send('Welcome!');

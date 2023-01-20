@@ -1,6 +1,14 @@
 // Controller functions used in authRoutes.js
-const register = (req, res) => {
-    res.send("register");
+
+import User from "../models/User.js";
+
+// note: async error handling done by express-async-error, express will automatically catch error like in sync code
+const register = async (req, res) => {
+    const user = await User.create(req.body);
+    // if (!user) {
+    //     throw new Error("Error in register controller");
+    // }
+    res.status(201).json(user);
 };
 
 const login = (req, res) => {
