@@ -1,6 +1,7 @@
 // Controller functions used in authRoutes.js
 
 import User from "../models/User.js";
+import { StatusCodes } from "http-status-codes";
 
 // note: async error handling done by express-async-error, express will automatically catch error like in sync code
 const register = async (req, res) => {
@@ -8,7 +9,7 @@ const register = async (req, res) => {
     // if (!user) {
     //     throw new Error("Error in register controller");
     // }
-    res.status(201).json(user);
+    res.status(StatusCodes.CREATED).json(user);
 };
 
 const login = (req, res) => {

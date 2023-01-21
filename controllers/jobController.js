@@ -1,4 +1,7 @@
 // Controller functions used in jobRoutes.js
+
+import { StatusCodes } from "http-status-codes";
+
 const createJob = (req, res) => {
     res.send("createJob");
 };
