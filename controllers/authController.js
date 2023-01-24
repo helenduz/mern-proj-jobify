@@ -14,7 +14,6 @@ const register = async (req, res) => {
 
     // check for duplicate email
     const userAlreadyExist = await User.findOne({ email: email });
-    console.log(userAlreadyExist);
     if (userAlreadyExist) {
         throw new BadRequestError("Server Controller Checks: this email is already in use!");
     }
