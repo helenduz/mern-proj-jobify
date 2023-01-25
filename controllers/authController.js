@@ -19,7 +19,14 @@ const register = async (req, res) => {
     }
 
     const user = await User.create(req.body);
-    res.status(StatusCodes.CREATED).json(user);
+    const userJWT = user.createJWT();
+    // excludes password in the response to client
+    res.status(StatusCodes.CREATED).json({ user: {
+        name: user.name,
+        lastName: user.lastName,
+        email: user.email,
+        location: user.location,
+    }, token: userJWT });
 };
 
 const login = (req, res) => {

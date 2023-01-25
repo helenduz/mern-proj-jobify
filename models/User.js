@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
 
 const UserSchema = mongoose.Schema({
     name: {
@@ -23,6 +25,7 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: [true, "Please provide a password!"],
         minlength: 8,
+        select: false,
     },
     lastName: {
         type: String,
@@ -38,11 +41,18 @@ const UserSchema = mongoose.Schema({
     },
 });
 
+// mongoose middleware
 UserSchema.pre('save', async function () {
     // note: bcrypt methods are async (recommended)
     const salt = await bcrypt.genSalt(10);
     // "this" points to the document where we called the method on
     this.password = await bcrypt.hash(this.password, salt);
 });
+
+// custom instance method
+UserSchema.methods.createJWT = function () {
+    // payload is just the document's default id assigned by mongoose
+    return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LIFETIME });
+};
 
 export default mongoose.model("User", UserSchema);
