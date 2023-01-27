@@ -18,9 +18,9 @@ import notFoundMiddleware from './middleware/not-found.js';
 
 // request handling chain
 app.use(express.json());
-app.get('/', (req, res) => {
+app.get('/api/v1', (req, res) => {
     // throw new Error('This is the message that prints to the console');
-    res.send('Welcome!');
+    res.json({ msg: 'Welcome!' });
 });
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/jobs', jobRouter);
