@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Logo, FormRow, Alert } from '../components/Components';
 import Wrapper from '../assets/wrappers/RegisterPage';
 import { useAppContext } from '../context/appContext';
+import { useNavigate } from 'react-router-dom';
 
 const initialInputState = {
   name: "",
@@ -11,8 +12,19 @@ const initialInputState = {
 };
 
 const Register = () => {
+  const navigate = useNavigate();
   const [inputState, setInputState] = useState(initialInputState);
-  const { isLoading, showAlert, displayAlert, clearAlert } = useAppContext();
+  const { user, isLoading, showAlert, displayAlert, clearAlert, registerUser } = useAppContext();
+
+  // redirect to dashboard if user info (from context) is not null
+  useEffect(() => {
+    if (user) {
+      // timeout is used so that user can have some time to read the alert
+      setTimeout(() => {
+        navigate('/');
+      }, 3000);
+    }
+  }, [user]);
 
   const handleInput = (event) => {
     setInputState({
@@ -23,7 +35,7 @@ const Register = () => {
     if (showAlert && !(!email || !password || (!name && !isMember))) {
       clearAlert();
     }
-    console.log(inputState);
+    // console.log(inputState);
   };
 
   const handleSubmit = (event) => {
@@ -32,6 +44,14 @@ const Register = () => {
     if (!email || !password || (!name && !isMember)) {
       displayAlert();
       return;
+    }
+
+    // Calling event handler for login or register (inherited from appContext)
+    const currentUser = { name, email, password };
+    if (isMember) {
+      console.log('Already a Memeber! Will do login stuff later!');
+    } else {
+      registerUser(currentUser);
     }
     console.log(inputState);
   };
@@ -68,12 +88,12 @@ const Register = () => {
 
       {/* Input and submit button */}
       {inputState.isMember ? loginFormRows : registerFormRows}
-      <button type='submit' className='btn  btn-block'>Submit</button>
+      <button disabled={isLoading} type='submit' className='btn  btn-block'>Submit</button>
 
       {/* Toggle register/login */}
       <p>
         {inputState.isMember ? "Not yet a member?" : "Already a member?"}
-        <button onClick={toggleForm} className="member-btn">
+        <button type='button' onClick={toggleForm} className="member-btn">
         {inputState.isMember ? "Register" : "Login"}
         </button>
       </p>

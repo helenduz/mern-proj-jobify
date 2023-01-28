@@ -1,13 +1,18 @@
 // need to provide context for general state of app, and this state is managed by a reducer
 import React, { useReducer, useContext } from "react";
 import { appInfoReducer } from "./reducer";
-import { CLEAR_ALERT, DISPLAY_ALERT } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS } from "./action";
+import axios from "axios";
 
 const initialAppInfo = {
     isLoading: false,
     showAlert: false,
     alertType: '',
     alertText: '',
+    user: null,
+    token: null,
+    userLocation: '',
+    jobLocation: '',
 };
 
 // context for app info and its dispatch function
@@ -31,9 +36,41 @@ const AppProvider = ({ children }) => {
         })
     };
 
+    const registerUser = async (currentUser) => {
+        // setting isLoading state
+        dispatch({
+            type: REGISTER_USER_BEGIN,
+        });
+        try {
+            // calls to backend APIs
+            const response = await axios.post('/api/v1/auth/register', currentUser);
+            // setting user info states
+            const { user, token } = response.data; 
+            dispatch({
+                type: REGISTER_USER_SUCCESS,
+                payload: {
+                    user,
+                    token,
+                }
+            });
+            // later: will also add response data to local storage
+        } catch (error) {
+            console.log(error.response);
+            // setting isLoading and alert states
+            dispatch({
+                type: REGISTER_USER_ERROR,
+                payload: {
+                    msg: error.response.data.msg,
+                }
+            })
+        }
+        // clearing alert (should happen regardless of success of error!)
+        //clearAlert();
+    };
+
     return (
         // expand the state obj appInfo so that we can directly access fields in the consumers
-        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert}}>
+        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser}}>
             <DispatchContext.Provider value={dispatch}>
             {children}
             </DispatchContext.Provider>
