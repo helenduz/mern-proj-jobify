@@ -5,6 +5,11 @@ import 'express-async-errors';
 import * as dotenv from 'dotenv';
 dotenv.config()
 
+import morgan from 'morgan';
+if (process.env.NODE_ENV !== 'production') {
+   app.use(morgan('dev'));
+}
+
 import connectDB from './db/connect.js';
 
 // routers

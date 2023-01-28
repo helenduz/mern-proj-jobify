@@ -4,16 +4,29 @@ import { appInfoReducer } from "./reducer";
 import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS } from "./action";
 import axios from "axios";
 
+const userLocal = localStorage.getItem('user');
+const tokenLocal = localStorage.getItem('token');
+
 const initialAppInfo = {
     isLoading: false,
     showAlert: false,
     alertType: '',
     alertText: '',
-    user: null,
-    token: null,
+    user: userLocal ? JSON.parse(userLocal) : null,
+    token: tokenLocal,
     userLocation: '',
     jobLocation: '',
 };
+
+const addToLocalStorage = ({ user, token }) => {
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('token', token);
+};
+
+const removeFromLocalStorage = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+}
 
 // context for app info and its dispatch function
 // we did not use the dispatch context but kept for potential future use
@@ -53,7 +66,8 @@ const AppProvider = ({ children }) => {
                     token,
                 }
             });
-            // later: will also add response data to local storage
+            // add response data to local storage
+            addToLocalStorage({ user, token });
         } catch (error) {
             console.log(error.response);
             // setting isLoading and alert states
