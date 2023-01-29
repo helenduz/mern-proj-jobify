@@ -49,10 +49,15 @@ UserSchema.pre('save', async function () {
     this.password = await bcrypt.hash(this.password, salt);
 });
 
-// custom instance method
+// custom instance methods
 UserSchema.methods.createJWT = function () {
     // payload is just the document's default id assigned by mongoose
     return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LIFETIME });
 };
+
+UserSchema.methods.checkPassword = async function (unhashedPw) {
+    const pwCorrect = await bcrypt.compare(unhashedPw, this.password);
+    return pwCorrect;
+}
 
 export default mongoose.model("User", UserSchema);

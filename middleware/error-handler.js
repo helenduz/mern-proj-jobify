@@ -5,7 +5,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     // Using status code and message in the error object if it contains it, otherwise default to 500 as code and the entire error as msg
     const defaultError = {
         statusCode: err.status_code || StatusCodes.INTERNAL_SERVER_ERROR,
-        msg: err.message || `Unexpected Error: ${err}`,
+        msg: err.message ? `Error Handler Checks: ${err.message}`: `Error Handler Checks: Unexpected Error: ${err}`,
     };
 
     // Validation Error (error object is passed up from Mongoose)
