@@ -1,7 +1,7 @@
 // need to provide context for general state of app, and this state is managed by a reducer
 import React, { useReducer, useContext } from "react";
 import { appInfoReducer } from "./reducer";
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS } from "./action";
 import axios from "axios";
 
 const userLocal = localStorage.getItem('user');
@@ -76,15 +76,42 @@ const AppProvider = ({ children }) => {
                 payload: {
                     msg: error.response.data.msg,
                 }
-            })
+            });
         }
         // clearing alert (should happen regardless of success of error!)
         //clearAlert();
     };
 
+    const loginUser = async (currentUser) => {
+        // same logic as registerUser!
+        dispatch({
+            type: LOGIN_USER_BEGIN,
+        });
+        try {
+            const response = await axios.post('/api/v1/auth/login', currentUser);
+            const { user, token } = response.data; 
+            dispatch({
+                type: LOGIN_USER_SUCCESS,
+                payload: {
+                    user,
+                    token,
+                }
+            });
+            addToLocalStorage({ user, token });
+        } catch (error) {
+            console.log(error.response);
+            dispatch({
+                type: LOGIN_USER_ERROR,
+                payload: {
+                    msg: error.response.data.msg,
+                }
+            });
+        }
+    };
+
     return (
         // expand the state obj appInfo so that we can directly access fields in the consumers
-        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser}}>
+        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser}}>
             <DispatchContext.Provider value={dispatch}>
             {children}
             </DispatchContext.Provider>

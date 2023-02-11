@@ -14,7 +14,7 @@ const initialInputState = {
 const Register = () => {
   const navigate = useNavigate();
   const [inputState, setInputState] = useState(initialInputState);
-  const { user, isLoading, showAlert, displayAlert, clearAlert, registerUser } = useAppContext();
+  const { user, isLoading, showAlert, displayAlert, clearAlert, registerUser, loginUser } = useAppContext();
 
   // redirect to dashboard if user info (from context) is not null
   useEffect(() => {
@@ -47,11 +47,10 @@ const Register = () => {
     }
 
     // Calling event handler for login or register (inherited from appContext)
-    const currentUser = { name, email, password };
     if (isMember) {
-      console.log('Already a Memeber! Will do login stuff later!');
+      loginUser({ email, password })
     } else {
-      registerUser(currentUser);
+      registerUser({ name, email, password });
     }
     console.log(inputState);
   };
