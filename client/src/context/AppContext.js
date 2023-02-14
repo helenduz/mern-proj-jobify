@@ -1,7 +1,7 @@
 // need to provide context for general state of app, and this state is managed by a reducer
 import React, { useReducer, useContext } from "react";
 import { appInfoReducer } from "./reducer";
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER } from "./action";
 import axios from "axios";
 
 const userLocal = localStorage.getItem('user');
@@ -16,6 +16,7 @@ const initialAppInfo = {
     token: tokenLocal,
     userLocation: '',
     jobLocation: '',
+    showSidebar: true,
 };
 
 const addToLocalStorage = ({ user, token }) => {
@@ -109,9 +110,22 @@ const AppProvider = ({ children }) => {
         }
     };
 
+    const toggleSidebar = () => {
+        dispatch({
+            type: TOGGLE_SIDEBAR,
+        });
+    };
+
+    const logoutUser = () => {
+        dispatch({
+            type: LOGOUT_USER,
+        });
+        removeFromLocalStorage();
+    }
+
     return (
         // expand the state obj appInfo so that we can directly access fields in the consumers
-        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser}}>
+        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser, toggleSidebar, logoutUser}}>
             <DispatchContext.Provider value={dispatch}>
             {children}
             </DispatchContext.Provider>
@@ -130,4 +144,4 @@ const useAppDispatchContext = () => {
     return useContext(DispatchContext);
 };
 
-export { AppProvider, useAppContext, useAppDispatchContext };
+export { AppProvider, useAppContext, useAppDispatchContext, initialAppInfo };

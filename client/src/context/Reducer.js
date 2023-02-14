@@ -1,4 +1,5 @@
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER } from "./action";
+import { initialAppInfo } from "./appContext";
 
 const appInfoReducer = (state, action) => {
     if (action.type === DISPLAY_ALERT) {
@@ -41,7 +42,7 @@ const appInfoReducer = (state, action) => {
             showAlert: true,
             alertType: 'danger',
             alertText: `Something went wrong: ${action.payload.msg}`,
-        }
+        };
     }
     if (action.type === LOGIN_USER_BEGIN) {
         return {
@@ -67,10 +68,22 @@ const appInfoReducer = (state, action) => {
             showAlert: true,
             alertType: 'danger',
             alertText: `Something went wrong: ${action.payload.msg}`,
-        }
+        };
     }   
+    if (action.type === TOGGLE_SIDEBAR) {
+        return {
+            ...state,
+            showSidebar: !state.showSidebar,
+        };
+    }
+    if (action.type === LOGOUT_USER) {
+        return {
+            ...initialAppInfo,
+            user: null,
+            token: null,
+        };
+    }
     throw new Error(`No such action: ${action}`);
-    
 };
 
 export { appInfoReducer };
