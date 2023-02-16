@@ -16,7 +16,7 @@ const initialAppInfo = {
     token: tokenLocal,
     userLocation: '',
     jobLocation: '',
-    showSidebar: true,
+    showSidebar: false,
 };
 
 const addToLocalStorage = ({ user, token }) => {
