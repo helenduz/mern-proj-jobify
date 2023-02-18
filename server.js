@@ -19,6 +19,7 @@ import jobRouter from './routes/jobRoutes.js';
 // app-level middlewares
 import errorHandlerMiddleware from './middleware/error-handler.js';
 import notFoundMiddleware from './middleware/not-found.js';
+import authorizeUser from './middleware/authorizeUser.js';
 
 
 // request handling chain
@@ -28,7 +29,7 @@ app.get('/api/v1', (req, res) => {
     res.json({ msg: 'Welcome!' });
 });
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/jobs', jobRouter);
+app.use('/api/v1/jobs', authorizeUser, jobRouter);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
