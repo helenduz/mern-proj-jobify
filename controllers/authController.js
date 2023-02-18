@@ -61,8 +61,31 @@ const login = async (req, res) => {
 
 };
 
-const updateUser = (req, res) => {
-    res.send("updateUser");
+const updateUser = async (req, res) => {
+    const { name, email, lastName, location } = req.body;
+    // Check all fields are provided
+    if (!name || !email || !lastName || !location) {
+        throw new BadRequestError('Server Controller Checks: Please provide all values!');
+    }
+    
+    // Find user document
+    const user = await User.findOne({ _id: req.user.userId });
+
+    // Update values and save
+    user.name = name;
+    user.email = email;
+    user.lastName = lastName;
+    user.location = location;
+    await user.save();
+
+    // Send back new user object & new token
+    const userJWT = user.createJWT();
+    // excludes password in the response to client
+    res.status(StatusCodes.OK).json({ 
+        user: user,
+        token: userJWT 
+    });
+
 };
 
 export { register, login, updateUser };

@@ -43,6 +43,9 @@ const UserSchema = mongoose.Schema({
 
 // mongoose middleware
 UserSchema.pre('save', async function () {
+    if (!(this.isModified('password'))) {
+        return; // to void triggering hashing when user is only updating name/email/location
+    }
     // note: bcrypt methods are async (recommended)
     const salt = await bcrypt.genSalt(10);
     // "this" points to the document where we called the method on
