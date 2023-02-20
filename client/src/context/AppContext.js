@@ -3,6 +3,7 @@ import React, { useReducer, useContext } from "react";
 import { appInfoReducer } from "./reducer";
 import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER } from "./action";
 import axios from "axios";
+import { getAuthFetchInstance, setAuthFetchInstanceInterceptors } from "../util/axiosConfig";
 
 const userLocal = localStorage.getItem('user');
 const tokenLocal = localStorage.getItem('token');
@@ -123,9 +124,22 @@ const AppProvider = ({ children }) => {
         removeFromLocalStorage();
     }
 
+    const updateUser = async (user) => {
+        try {
+            const authFetchInstance = getAuthFetchInstance(appInfo.token);
+            setAuthFetchInstanceInterceptors(authFetchInstance);
+            await authFetchInstance.patch('/auth/updateUser', user);
+        } catch (error) {
+            // we don't actually have to do any error handling here
+            // interceptor should have already taken care of them!
+            // writing the catch block just for consistency
+            console.log(error.response);
+        }
+    }
+
     return (
         // expand the state obj appInfo so that we can directly access fields in the consumers
-        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser, toggleSidebar, logoutUser}}>
+        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser}}>
             <DispatchContext.Provider value={dispatch}>
             {children}
             </DispatchContext.Provider>
