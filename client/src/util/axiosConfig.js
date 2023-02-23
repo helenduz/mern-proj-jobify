@@ -12,7 +12,7 @@ const getAuthFetchInstance = (token) => {
 
 
 // Define interceptors for authFetchInstance
-const setAuthFetchInstanceInterceptors = (authFetchInstance) => {
+const setAuthFetchInstanceInterceptors = (authFetchInstance, logoutUser) => {
     authFetchInstance.interceptors.response.use(
         (response) => {
             // for success
@@ -21,8 +21,9 @@ const setAuthFetchInstanceInterceptors = (authFetchInstance) => {
         (error) => {
             console.log(error.response);
             if (error.response.status === 401) {
-                console.log('AUTH ERROR');
-              }
+                logoutUser();
+                console.log('AUTH ERROR! LOGGED OUT USER');
+            }
             // Promise.reject() throws error up the stack
             // this line is needed if you want code that uses this instance to catch the error
             return Promise.reject(error);

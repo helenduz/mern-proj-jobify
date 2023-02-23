@@ -1,7 +1,7 @@
 // need to provide context for general state of app, and this state is managed by a reducer
 import React, { useReducer, useContext } from "react";
 import { appInfoReducer } from "./reducer";
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR } from "./action";
 import axios from "axios";
 import { getAuthFetchInstance, setAuthFetchInstanceInterceptors } from "../util/axiosConfig";
 
@@ -126,17 +126,42 @@ const AppProvider = ({ children }) => {
         removeFromLocalStorage();
     }
 
-    const updateUser = async (user) => {
+    const updateUser = async (currentUser) => {
+        // logic is same as login/register except for request
+        dispatch({
+            type: UPDATE_USER_BEGIN,
+        });
         try {
             const authFetchInstance = getAuthFetchInstance(appInfo.token);
-            setAuthFetchInstanceInterceptors(authFetchInstance);
-            await authFetchInstance.patch('/auth/updateUser', user);
+            setAuthFetchInstanceInterceptors(authFetchInstance, logoutUser);
+            const response = await authFetchInstance.patch('/auth/updateUser', currentUser);
+            const { user, token } = response.data; 
+            console.log(user);
+            dispatch({
+                type: UPDATE_USER_SUCCESS,
+                payload: {
+                    user,
+                    token,
+                }
+            });
+            addToLocalStorage({ user, token })
         } catch (error) {
             // we don't actually have to do any error handling here
             // interceptor should have already taken care of them!
-            // writing the catch block just for consistency
+            // only need to update view accordingly
             console.log(error.response);
+            // if 401 error user will be directly logged out (by interceptor)
+            // no need to display alert
+            if (error.response.status !== 401) {
+                dispatch({
+                    type: UPDATE_USER_ERROR,
+                    payload: {
+                        msg: error.response.data.msg,
+                    }
+                });
+            }
         }
+        setTimeout(clearAlert, 3000);
     }
 
     return (
