@@ -81,7 +81,8 @@ const AppProvider = ({ children }) => {
             });
         }
         // clearing alert (should happen regardless of success of error!)
-        //clearAlert();
+        // this is because we will use the showAlert state after register/login in other places and so we must reset the related states!
+        setTimeout(clearAlert, 3000);
     };
 
     const loginUser = async (currentUser) => {
@@ -109,6 +110,7 @@ const AppProvider = ({ children }) => {
                 }
             });
         }
+        setTimeout(clearAlert, 3000);
     };
 
     const toggleSidebar = () => {
