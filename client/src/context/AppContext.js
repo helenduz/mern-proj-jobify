@@ -1,7 +1,7 @@
 // need to provide context for general state of app, and this state is managed by a reducer
 import React, { useReducer, useContext } from "react";
 import { appInfoReducer } from "./reducer";
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR } from "./action";
 import axios from "axios";
 import { getAuthFetchInstance, setAuthFetchInstanceInterceptors } from "../util/axiosConfig";
 
@@ -15,9 +15,18 @@ const initialAppInfo = {
     alertText: '',
     user: userLocal ? JSON.parse(userLocal) : null,
     token: tokenLocal,
-    userLocation: '',
-    jobLocation: '',
+    // userLocation: '',
     showSidebar: false,
+    // job related states
+    isEditingJob: false,
+    editJobId: '',
+    position: '',
+    company: '',
+    jobLocation: '',
+    jobTypeOptions: ['full-time', 'part-time', 'internship'],
+    jobType: 'full-time',
+    statusOptions: ['interviewing', 'declined', 'pending', 'accepted'],
+    status: 'pending',
 };
 
 const addToLocalStorage = ({ user, token }) => {
@@ -164,9 +173,57 @@ const AppProvider = ({ children }) => {
         setTimeout(clearAlert, 3000);
     }
 
+    const handleJobForm = ({ propertyName, propertyValue }) => {
+        dispatch({
+            type: HANDLE_JOB_FORM,
+            payload: {
+                propertyName,
+                propertyValue,
+            }
+        });
+    }
+
+    const clearJobForm = () => {
+        dispatch({
+            type: CLEAR_JOB_FORM,
+        })
+    }
+
+    const createJob = async () => {
+        // setting isLoading state
+        dispatch({
+            type: CREATE_JOB_BEGIN,
+        });
+
+        const { position, company, jobLocation, jobType, status } = appInfo; // appInfo will be in scope when we call this handler
+
+        try {
+            const authFetchInstance = getAuthFetchInstance(appInfo.token);
+            setAuthFetchInstanceInterceptors(authFetchInstance, logoutUser);
+            await authFetchInstance.post('/jobs/', { position, company, jobLocation, jobType, status });
+
+            dispatch({
+                type: CREATE_JOB_SUCCESS,
+            });
+            dispatch({
+                type: CLEAR_JOB_FORM,
+            })
+        } catch (error) {
+            if (error.response.status !== 401) {
+                dispatch({
+                    type: CREATE_JOB_ERROR,
+                    payload: {
+                        msg: error.response.data.msg,
+                    }
+                });
+            }
+        }
+        setTimeout(clearAlert, 3000); 
+    }
+
     return (
         // expand the state obj appInfo so that we can directly access fields in the consumers
-        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser}}>
+        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleJobForm, clearJobForm, createJob}}>
             <DispatchContext.Provider value={dispatch}>
             {children}
             </DispatchContext.Provider>
