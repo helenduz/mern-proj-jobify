@@ -1,7 +1,7 @@
 // need to provide context for general state of app, and this state is managed by a reducer
 import React, { useReducer, useContext } from "react";
 import { appInfoReducer } from "./reducer";
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN } from "./action";
 import axios from "axios";
 import { getAuthFetchInstance, setAuthFetchInstanceInterceptors } from "../util/axiosConfig";
 
@@ -27,6 +27,10 @@ const initialAppInfo = {
     jobType: 'full-time',
     statusOptions: ['interviewing', 'declined', 'pending', 'accepted'],
     status: 'pending',
+    jobs: [],
+    totalJobs: 0,
+    page: 0,
+    numPages: 0,
 };
 
 const addToLocalStorage = ({ user, token }) => {
@@ -221,9 +225,36 @@ const AppProvider = ({ children }) => {
         setTimeout(clearAlert, 3000); 
     }
 
+    const getAllJobs = async () => {
+        // more functionalities will be added later
+        // that's why we use template strings
+        const url = `/jobs`;
+        
+        dispatch({
+            type: GET_ALL_JOBS_BEGIN,
+        })
+
+        try {
+            const authFetchInstance = getAuthFetchInstance(appInfo.token);
+            setAuthFetchInstanceInterceptors(authFetchInstance, logoutUser);
+            const { jobs, totalJobs, numPages } = await authFetchInstance.get(url);
+
+            dispatch({
+                type: GET_ALL_JOBS_BEGIN,
+                payload: {
+                    jobs, 
+                    totalJobs, 
+                    numPages
+                }
+            });
+        } catch (error) {
+            console.log(error.response);
+        }
+    }
+
     return (
         // expand the state obj appInfo so that we can directly access fields in the consumers
-        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleJobForm, clearJobForm, createJob}}>
+        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleJobForm, clearJobForm, createJob, getAllJobs}}>
             <DispatchContext.Provider value={dispatch}>
             {children}
             </DispatchContext.Provider>
