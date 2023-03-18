@@ -1,7 +1,7 @@
 // need to provide context for general state of app, and this state is managed by a reducer
 import React, { useReducer, useContext } from "react";
 import { appInfoReducer } from "./reducer";
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS } from "./action";
 import axios from "axios";
 import { getAuthFetchInstance, setAuthFetchInstanceInterceptors } from "../util/axiosConfig";
 
@@ -237,10 +237,12 @@ const AppProvider = ({ children }) => {
         try {
             const authFetchInstance = getAuthFetchInstance(appInfo.token);
             setAuthFetchInstanceInterceptors(authFetchInstance, logoutUser);
-            const { jobs, totalJobs, numPages } = await authFetchInstance.get(url);
+            // remember fetch gives us HTML message and we look for the data field
+            const { data } = await authFetchInstance.get(url);
+            const { jobs, totalJobs, numPages } = data;
 
             dispatch({
-                type: GET_ALL_JOBS_BEGIN,
+                type: GET_ALL_JOBS_SUCCESS,
                 payload: {
                     jobs, 
                     totalJobs, 
@@ -252,9 +254,17 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const setEditJob = (id) => {
+        console.log(`set edit job with id ${id}`);
+    };
+
+    const deleteJob = (id) => {
+        console.log(`set delete job with id ${id}`);
+    };
+
     return (
         // expand the state obj appInfo so that we can directly access fields in the consumers
-        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleJobForm, clearJobForm, createJob, getAllJobs}}>
+        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleJobForm, clearJobForm, createJob, getAllJobs, setEditJob, deleteJob}}>
             <DispatchContext.Provider value={dispatch}>
             {children}
             </DispatchContext.Provider>

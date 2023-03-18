@@ -45,7 +45,7 @@ const Wrapper = styled.article`
     background: #fcefc7;
     color: #e9b949;
   }
-  .interview {
+  .interviewing {
     background: #e0e8f9;
     color: #647acb;
   }
@@ -76,7 +76,7 @@ const Wrapper = styled.article`
     text-transform: capitalize;
     letter-spacing: var(--letterSpacing);
     text-align: center;
-    width: 100px;
+    width: 125px;
     height: 30px;
   }
   footer {
