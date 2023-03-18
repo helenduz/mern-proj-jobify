@@ -1,7 +1,7 @@
 // need to provide context for general state of app, and this state is managed by a reducer
 import React, { useReducer, useContext } from "react";
 import { appInfoReducer } from "./reducer";
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, SET_EDIT_JOB } from "./action";
 import axios from "axios";
 import { getAuthFetchInstance, setAuthFetchInstanceInterceptors } from "../util/axiosConfig";
 
@@ -190,7 +190,7 @@ const AppProvider = ({ children }) => {
     const clearJobForm = () => {
         dispatch({
             type: CLEAR_JOB_FORM,
-        })
+        });
     }
 
     const createJob = async () => {
@@ -199,7 +199,7 @@ const AppProvider = ({ children }) => {
             type: CREATE_JOB_BEGIN,
         });
 
-        const { position, company, jobLocation, jobType, status } = appInfo; // appInfo will be in scope when we call this handler
+        const { position, company, jobLocation, jobType, status } = appInfo;
 
         try {
             const authFetchInstance = getAuthFetchInstance(appInfo.token);
@@ -211,7 +211,7 @@ const AppProvider = ({ children }) => {
             });
             dispatch({
                 type: CLEAR_JOB_FORM,
-            })
+            });
         } catch (error) {
             if (error.response.status !== 401) {
                 dispatch({
@@ -232,7 +232,7 @@ const AppProvider = ({ children }) => {
         
         dispatch({
             type: GET_ALL_JOBS_BEGIN,
-        })
+        });
 
         try {
             const authFetchInstance = getAuthFetchInstance(appInfo.token);
@@ -255,8 +255,25 @@ const AppProvider = ({ children }) => {
     }
 
     const setEditJob = (id) => {
-        console.log(`set edit job with id ${id}`);
+        const job = appInfo.jobs.find((el) => el._id === id);
+        console.log(job);
+        const { _id, position, company, jobLocation, jobType, status } = job;
+        dispatch({
+            type: SET_EDIT_JOB,
+            payload: {
+                _id, 
+                position, 
+                company, 
+                jobLocation, 
+                jobType, 
+                status,
+            },
+        });
     };
+
+    const editJob = () => {
+        console.log("editJob");
+    }
 
     const deleteJob = (id) => {
         console.log(`set delete job with id ${id}`);
@@ -264,7 +281,7 @@ const AppProvider = ({ children }) => {
 
     return (
         // expand the state obj appInfo so that we can directly access fields in the consumers
-        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleJobForm, clearJobForm, createJob, getAllJobs, setEditJob, deleteJob}}>
+        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleJobForm, clearJobForm, createJob, getAllJobs, setEditJob, deleteJob, editJob}}>
             <DispatchContext.Provider value={dispatch}>
             {children}
             </DispatchContext.Provider>

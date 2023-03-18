@@ -5,7 +5,7 @@ import { FormRow, Alert, FormRowSelect } from "../../components/Components";
 const AddJob = () => {
   const {
     isLoading,
-    isEditing,
+    isEditingJob,
     showAlert,
     displayAlert,
     position,
@@ -18,6 +18,7 @@ const AddJob = () => {
     handleJobForm,
     clearJobForm,
     createJob,
+    editJob,
   } = useAppContext();
 
   // Sanity check and calls handler for sending request
@@ -27,8 +28,8 @@ const AddJob = () => {
       displayAlert();
       return;
     }
-    if (isEditing) {
-      // Will call editJob() handler instead later
+    if (isEditingJob) {
+      editJob();
       return;
     }
     createJob();
@@ -42,7 +43,7 @@ const AddJob = () => {
   return (
     <Wrapper>
       {/* title and alert */}
-      <h3>{isEditing? "Edit Job" : "Add Job"}</h3>
+      <h3>{isEditingJob? "Edit Job" : "Add Job"}</h3>
       {showAlert && <Alert/>}
 
       {/* form */}

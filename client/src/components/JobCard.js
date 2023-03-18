@@ -38,7 +38,7 @@ const JobCard = ({ job }) => {
         {/* edit and delete buttons */}
         <footer>
           <div className="actions">
-            <Link to="/add-job" className="btn edit-btn" onClick={()=>{ setEditJob(_id); console.log(status)}}>Edit</Link>
+            <Link to="/add-job" className="btn edit-btn" onClick={()=>{ setEditJob(_id); }}>Edit</Link>
             <button className="btn delete-btn" onClick={()=>{ deleteJob(_id); }}>Delete</button>
           </div>
         </footer>

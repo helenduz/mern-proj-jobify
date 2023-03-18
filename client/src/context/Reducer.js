@@ -1,4 +1,4 @@
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, SET_EDIT_JOB } from "./action";
 import { initialAppInfo } from "./appContext";
 
 const appInfoReducer = (state, action) => {
@@ -107,13 +107,13 @@ const appInfoReducer = (state, action) => {
             showAlert: true,
             alertType: 'danger',
             alertText: `Something went wrong: ${action.payload.msg}`,
-        }
+        };
     }
     if (action.type === HANDLE_JOB_FORM) {
         return {
             ...state,
             [action.payload.propertyName]: action.payload.propertyValue,
-        }
+        };
     }
     if (action.type === CLEAR_JOB_FORM) {
         return {
@@ -128,7 +128,7 @@ const appInfoReducer = (state, action) => {
             jobType: 'full-time',
             statusOptions: ['interviewing', 'declined', 'pending', 'accepted'],
             status: 'pending',
-        }
+        };
     }
     if (action.type === CREATE_JOB_BEGIN) {
         return {
@@ -152,7 +152,7 @@ const appInfoReducer = (state, action) => {
             showAlert: true,
             alertType: 'danger',
             alertText: `Something went wrong: ${action.payload.msg}`,
-        }
+        };
     }
     if (action.type === GET_ALL_JOBS_BEGIN) {
         return {
@@ -167,7 +167,19 @@ const appInfoReducer = (state, action) => {
             jobs: action.payload.jobs,
             totalJobs: action.payload.totalJobs,
             numPages: action.payload.numPages,
-        }
+        };
+    }
+    if (action.type === SET_EDIT_JOB) {
+        return {
+            ...state, 
+            isEditingJob: true,
+            editJobId: action.payload._id,
+            position: action.payload.position,
+            company: action.payload.company, 
+            jobLocation: action.payload.jobLocation,
+            jobType: action.payload.jobType, 
+            status: action.payload.status,
+        };
     }
     throw new Error(`No such action: ${action}`);
 };
