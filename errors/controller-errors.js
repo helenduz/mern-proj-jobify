@@ -21,4 +21,11 @@ class UnauthenticatedError extends Error {
     };
 }
 
-export { BadRequestError, NotFoundError, UnauthenticatedError };
+class ForbiddenError extends Error {
+    constructor(message) {
+        super(message);
+        this.status_code = StatusCodes.FORBIDDEN;
+    };
+}
+
+export { BadRequestError, NotFoundError, UnauthenticatedError, ForbiddenError };

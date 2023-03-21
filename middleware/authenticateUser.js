@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { UnauthenticatedError } from "../errors/controller-errors.js";
 
-const authorizeUser = async (req, res, next) => {
+const authenticateUser = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer')) {
         throw new UnauthenticatedError("Auth Middleware: Invalid authorization header");
@@ -20,4 +20,4 @@ const authorizeUser = async (req, res, next) => {
     // Check if user is exists in database
 };
 
-export default authorizeUser;
+export default authenticateUser;
