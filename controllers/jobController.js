@@ -31,10 +31,6 @@ const getAllJobs = async (req, res) => {
     });
 };
 
-const deleteJob = (req, res) => {
-    res.send("getAllJobs");
-};
-
 const updateJob = async (req, res) => {
     // get ID from req.params
     const { id:jobId } = req.params;
@@ -62,6 +58,17 @@ const updateJob = async (req, res) => {
     });
 
     res.status(StatusCodes.OK).json(updatedJob);
+};
+
+const deleteJob = async (req, res) => {
+    const { id:jobId } = req.params;
+    const job = await Job.findOne({ _id: jobId });
+    if (!job) {
+        throw new NotFoundError(`Server Controller Checks: Job with ID ${jobId} cannot be found in database`);
+    }
+    checkPermissions(req.user, job.createdBy);
+    await job.remove();
+    res.status(StatusCodes.OK).json({ msg: `Job ${jobId} removed!` });
 };
 
 const showStats = (req, res) => {
