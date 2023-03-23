@@ -1,4 +1,4 @@
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, SET_EDIT_JOB } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, SET_EDIT_JOB, DELETE_JOB_BEGIN } from "./action";
 import { initialAppInfo } from "./appContext";
 
 const appInfoReducer = (state, action) => {
@@ -180,6 +180,12 @@ const appInfoReducer = (state, action) => {
             jobType: action.payload.jobType, 
             status: action.payload.status,
         };
+    }
+    if (action.type === DELETE_JOB_BEGIN) {
+        return {
+            ...state,
+            isLoading: true,
+        }
     }
     throw new Error(`No such action: ${action}`);
 };
