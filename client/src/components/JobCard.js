@@ -19,8 +19,8 @@ const JobCard = ({ job }) => {
         <div className="main-icon">{company.charAt(0)}</div>
         {/* title info */}
         <div className="info">
-          <h5>{position}</h5>
-          <p>{company}</p>
+          <h5>{company}</h5>
+          <p>{position}</p>
         </div>
       </header>
 
