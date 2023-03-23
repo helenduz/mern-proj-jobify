@@ -1,7 +1,7 @@
 // need to provide context for general state of app, and this state is managed by a reducer
 import React, { useReducer, useContext } from "react";
 import { appInfoReducer } from "./reducer";
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, SET_EDIT_JOB, DELETE_JOB_BEGIN } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, SET_EDIT_JOB, DELETE_JOB_BEGIN, EDIT_JOB_BEGIN, EDIT_JOB_SUCCESS, EDIT_JOB_ERROR } from "./action";
 import axios from "axios";
 import { getAuthFetchInstance, setAuthFetchInstanceInterceptors } from "../util/axiosConfig";
 
@@ -271,8 +271,36 @@ const AppProvider = ({ children }) => {
         });
     };
 
-    const editJob = () => {
-        console.log("editJob");
+    const editJob = async () => {
+        // same logic as createJob
+        dispatch({
+            type: EDIT_JOB_BEGIN,
+        });
+
+        const { position, company, jobLocation, jobType, status, editJobId } = appInfo;
+
+        try {
+            const authFetchInstance = getAuthFetchInstance(appInfo.token);
+            setAuthFetchInstanceInterceptors(authFetchInstance, logoutUser);
+            await authFetchInstance.patch(`/jobs/${editJobId}`, { position, company, jobLocation, jobType, status });
+
+            dispatch({
+                type: EDIT_JOB_SUCCESS,
+            });
+            dispatch({
+                type: CLEAR_JOB_FORM,
+            });
+        } catch (error) {
+            if (error.response.status !== 401) {
+                dispatch({
+                    type: EDIT_JOB_ERROR,
+                    payload: {
+                        msg: error.response.data.msg,
+                    }
+                });
+            }
+        }
+        setTimeout(clearAlert, 3000); 
     }
 
     const deleteJob = async (jobId) => {

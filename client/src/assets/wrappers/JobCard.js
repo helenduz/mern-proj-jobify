@@ -53,6 +53,10 @@ const Wrapper = styled.article`
     color: #d66a6a;
     background: #ffeeee;
   }
+  .accepted {
+    color: #488b6d;
+    background: #e2f1e7;
+  }
   .content {
     padding: 1rem 1.5rem;
   }

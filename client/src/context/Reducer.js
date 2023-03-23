@@ -1,4 +1,4 @@
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, SET_EDIT_JOB, DELETE_JOB_BEGIN } from "./action";
+import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, SET_EDIT_JOB, DELETE_JOB_BEGIN, EDIT_JOB_SUCCESS, EDIT_JOB_BEGIN, EDIT_JOB_ERROR } from "./action";
 import { initialAppInfo } from "./appContext";
 
 const appInfoReducer = (state, action) => {
@@ -186,6 +186,30 @@ const appInfoReducer = (state, action) => {
             ...state,
             isLoading: true,
         }
+    }
+    if (action.type === EDIT_JOB_BEGIN) {
+        return {
+            ...state,
+            isLoading: true,
+        };
+    }    
+    if (action.type === EDIT_JOB_SUCCESS) {
+        return {
+            ...state,
+            isLoading: false,
+            showAlert: true,
+            alertType: 'success',
+            alertText: 'Job updated!',
+        };
+    }  
+    if (action.type === EDIT_JOB_ERROR) {
+        return {
+            ...state,
+            isLoading: false,
+            showAlert: true,
+            alertType: 'danger',
+            alertText: `Something went wrong: ${action.payload.msg}`,
+        };
     }
     throw new Error(`No such action: ${action}`);
 };
