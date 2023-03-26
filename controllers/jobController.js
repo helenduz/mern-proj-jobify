@@ -4,12 +4,15 @@ import Job from "../models/Job.js";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, NotFoundError, UnauthenticatedError } from "../errors/controller-errors.js";
 import checkPermissions from "../utils/checkPermissions.js";
+import mongoose, { mongo } from "mongoose";
 
 const createJob = async (req, res) => {
     // check for empty fields (that are required and don't have default values)
     const { position, company } = req.body;
     if (!position || !company) {
-        throw new BadRequestError("Server Controller Checks: please provide all values!");
+        throw new BadRequestError(
+            "Server Controller Checks: please provide all values!"
+        );
     }
 
     // create new job instance with userID set to what's passed in from request
@@ -33,18 +36,22 @@ const getAllJobs = async (req, res) => {
 
 const updateJob = async (req, res) => {
     // get ID from req.params
-    const { id:jobId } = req.params;
+    const { id: jobId } = req.params;
     const { company, position } = req.body;
 
     // check for company/position existence (echo front-end checks)
     if (!company || !position) {
-        throw new BadRequestError("Server Controller Checks: please provide all values!");
-    } 
+        throw new BadRequestError(
+            "Server Controller Checks: please provide all values!"
+        );
+    }
 
     // deal with job not found
     const job = await Job.findOne({ _id: jobId });
     if (!job) {
-        throw new NotFoundError(`Server Controller Checks: Job with ID ${jobId} cannot be found in database`);
+        throw new NotFoundError(
+            `Server Controller Checks: Job with ID ${jobId} cannot be found in database`
+        );
     }
 
     // check for whether user can access this job
@@ -61,18 +68,41 @@ const updateJob = async (req, res) => {
 };
 
 const deleteJob = async (req, res) => {
-    const { id:jobId } = req.params;
+    const { id: jobId } = req.params;
     const job = await Job.findOne({ _id: jobId });
     if (!job) {
-        throw new NotFoundError(`Server Controller Checks: Job with ID ${jobId} cannot be found in database`);
+        throw new NotFoundError(
+            `Server Controller Checks: Job with ID ${jobId} cannot be found in database`
+        );
     }
     checkPermissions(req.user, job.createdBy);
     await job.remove();
     res.status(StatusCodes.OK).json({ msg: `Job ${jobId} removed!` });
 };
 
-const showStats = (req, res) => {
-    res.send("showStats");
+const showStats = async (req, res) => {
+    let stats = await Job.aggregate([
+        // filter jobs by userId
+        // we need to convert useId (string) to mongoose ObjectId
+        { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+        // group by status field ("_id" is the grouping key), accumulator function is $sum and operand of sum is 1, and the accumulation result is stored as a field called "count" in the output
+        { $group: { _id: "$status", count: { $sum: 1 } } },
+    ]);
+
+    // reduce to object { statusType: count }
+    stats = stats.reduce((accumulator, currentValue) => {
+        const { _id, count } = currentValue;
+        accumulator[_id] = count;
+        return accumulator;
+    }, {});
+
+    // default count to 0 if statusType does not exist
+    const statusArr = Job.schema.path("status").enumValues;
+    let defaultStats = {};
+    statusArr.forEach((statusType) => {
+        defaultStats[statusType] = stats[statusType] || 0;
+    });
+    res.status(StatusCodes.OK).json(defaultStats);
 };
 
 export { createJob, deleteJob, getAllJobs, updateJob, showStats };
