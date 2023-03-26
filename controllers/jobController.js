@@ -4,7 +4,7 @@ import Job from "../models/Job.js";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, NotFoundError, UnauthenticatedError } from "../errors/controller-errors.js";
 import checkPermissions from "../utils/checkPermissions.js";
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const createJob = async (req, res) => {
     // check for empty fields (that are required and don't have default values)
