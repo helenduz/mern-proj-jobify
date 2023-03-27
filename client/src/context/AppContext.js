@@ -1,47 +1,80 @@
 // need to provide context for general state of app, and this state is managed by a reducer
 import React, { useReducer, useContext } from "react";
 import { appInfoReducer } from "./reducer";
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, SET_EDIT_JOB, DELETE_JOB_BEGIN, EDIT_JOB_BEGIN, EDIT_JOB_SUCCESS, EDIT_JOB_ERROR } from "./action";
+import {
+    CLEAR_ALERT,
+    DISPLAY_ALERT,
+    REGISTER_USER_BEGIN,
+    REGISTER_USER_ERROR,
+    REGISTER_USER_SUCCESS,
+    LOGIN_USER_BEGIN,
+    LOGIN_USER_ERROR,
+    LOGIN_USER_SUCCESS,
+    TOGGLE_SIDEBAR,
+    LOGOUT_USER,
+    UPDATE_USER_BEGIN,
+    UPDATE_USER_SUCCESS,
+    UPDATE_USER_ERROR,
+    HANDLE_JOB_FORM,
+    CLEAR_JOB_FORM,
+    CREATE_JOB_BEGIN,
+    CREATE_JOB_SUCCESS,
+    CREATE_JOB_ERROR,
+    GET_ALL_JOBS_BEGIN,
+    GET_ALL_JOBS_SUCCESS,
+    SET_EDIT_JOB,
+    DELETE_JOB_BEGIN,
+    EDIT_JOB_BEGIN,
+    EDIT_JOB_SUCCESS,
+    EDIT_JOB_ERROR,
+    SHOW_STATS_BEGIN,
+    SHOW_STATS_SUCCESS,
+} from "./action";
 import axios from "axios";
-import { getAuthFetchInstance, setAuthFetchInstanceInterceptors } from "../util/axiosConfig";
+import {
+    getAuthFetchInstance,
+    setAuthFetchInstanceInterceptors,
+} from "../util/axiosConfig";
 
-const userLocal = localStorage.getItem('user');
-const tokenLocal = localStorage.getItem('token');
+const userLocal = localStorage.getItem("user");
+const tokenLocal = localStorage.getItem("token");
 
 const initialAppInfo = {
     isLoading: false,
     showAlert: false,
-    alertType: '',
-    alertText: '',
+    alertType: "",
+    alertText: "",
     user: userLocal ? JSON.parse(userLocal) : null,
     token: tokenLocal,
     // userLocation: '',
     showSidebar: false,
     // job related states
     isEditingJob: false,
-    editJobId: '',
-    position: '',
-    company: '',
-    jobLocation: '',
-    jobTypeOptions: ['full-time', 'part-time', 'internship'],
-    jobType: 'full-time',
-    statusOptions: ['interviewing', 'declined', 'pending', 'accepted'],
-    status: 'pending',
+    editJobId: "",
+    position: "",
+    company: "",
+    jobLocation: "",
+    jobTypeOptions: ["full-time", "part-time", "internship"],
+    jobType: "full-time",
+    statusOptions: ["interviewing", "declined", "pending", "accepted"],
+    status: "pending",
     jobs: [],
     totalJobs: 0,
     page: 0,
     numPages: 0,
+    stats: {},
+    monthlyApplications: [],
 };
 
 const addToLocalStorage = ({ user, token }) => {
-    localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('token', token);
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", token);
 };
 
 const removeFromLocalStorage = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-}
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+};
 
 // context for app info and its dispatch function
 // we did not use the dispatch context but kept for potential future use
@@ -49,19 +82,19 @@ const AppInfoContext = React.createContext(null);
 const DispatchContext = React.createContext(null);
 
 const AppProvider = ({ children }) => {
-    const [appInfo, dispatch] = useReducer(appInfoReducer, initialAppInfo)
+    const [appInfo, dispatch] = useReducer(appInfoReducer, initialAppInfo);
 
     // Pre-set handlers for updating appInfo -> they will be available as part of the context
     const displayAlert = () => {
         dispatch({
             type: DISPLAY_ALERT,
-        })
+        });
     };
 
     const clearAlert = () => {
         dispatch({
             type: CLEAR_ALERT,
-        })
+        });
     };
 
     const registerUser = async (currentUser) => {
@@ -71,15 +104,18 @@ const AppProvider = ({ children }) => {
         });
         try {
             // calls to backend APIs
-            const response = await axios.post('/api/v1/auth/register', currentUser);
+            const response = await axios.post(
+                "/api/v1/auth/register",
+                currentUser
+            );
             // setting user info states
-            const { user, token } = response.data; 
+            const { user, token } = response.data;
             dispatch({
                 type: REGISTER_USER_SUCCESS,
                 payload: {
                     user,
                     token,
-                }
+                },
             });
             // add response data to local storage
             addToLocalStorage({ user, token });
@@ -90,7 +126,7 @@ const AppProvider = ({ children }) => {
                 type: REGISTER_USER_ERROR,
                 payload: {
                     msg: error.response.data.msg,
-                }
+                },
             });
         }
         // clearing alert (should happen regardless of success of error!)
@@ -104,14 +140,17 @@ const AppProvider = ({ children }) => {
             type: LOGIN_USER_BEGIN,
         });
         try {
-            const response = await axios.post('/api/v1/auth/login', currentUser);
-            const { user, token } = response.data; 
+            const response = await axios.post(
+                "/api/v1/auth/login",
+                currentUser
+            );
+            const { user, token } = response.data;
             dispatch({
                 type: LOGIN_USER_SUCCESS,
                 payload: {
                     user,
                     token,
-                }
+                },
             });
             addToLocalStorage({ user, token });
         } catch (error) {
@@ -120,7 +159,7 @@ const AppProvider = ({ children }) => {
                 type: LOGIN_USER_ERROR,
                 payload: {
                     msg: error.response.data.msg,
-                }
+                },
             });
         }
         setTimeout(clearAlert, 3000);
@@ -137,7 +176,7 @@ const AppProvider = ({ children }) => {
             type: LOGOUT_USER,
         });
         removeFromLocalStorage();
-    }
+    };
 
     const updateUser = async (currentUser) => {
         // logic is same as login/register except for request
@@ -147,17 +186,20 @@ const AppProvider = ({ children }) => {
         try {
             const authFetchInstance = getAuthFetchInstance(appInfo.token);
             setAuthFetchInstanceInterceptors(authFetchInstance, logoutUser);
-            const response = await authFetchInstance.patch('/auth/updateUser', currentUser);
-            const { user, token } = response.data; 
+            const response = await authFetchInstance.patch(
+                "/auth/updateUser",
+                currentUser
+            );
+            const { user, token } = response.data;
             console.log(user);
             dispatch({
                 type: UPDATE_USER_SUCCESS,
                 payload: {
                     user,
                     token,
-                }
+                },
             });
-            addToLocalStorage({ user, token })
+            addToLocalStorage({ user, token });
         } catch (error) {
             // we don't actually have to do any error handling here
             // interceptor should have already taken care of them!
@@ -170,12 +212,12 @@ const AppProvider = ({ children }) => {
                     type: UPDATE_USER_ERROR,
                     payload: {
                         msg: error.response.data.msg,
-                    }
+                    },
                 });
             }
         }
         setTimeout(clearAlert, 3000);
-    }
+    };
 
     const handleJobForm = ({ propertyName, propertyValue }) => {
         dispatch({
@@ -183,15 +225,15 @@ const AppProvider = ({ children }) => {
             payload: {
                 propertyName,
                 propertyValue,
-            }
+            },
         });
-    }
+    };
 
     const clearJobForm = () => {
         dispatch({
             type: CLEAR_JOB_FORM,
         });
-    }
+    };
 
     const createJob = async () => {
         // setting isLoading state
@@ -204,7 +246,13 @@ const AppProvider = ({ children }) => {
         try {
             const authFetchInstance = getAuthFetchInstance(appInfo.token);
             setAuthFetchInstanceInterceptors(authFetchInstance, logoutUser);
-            await authFetchInstance.post('/jobs/', { position, company, jobLocation, jobType, status });
+            await authFetchInstance.post("/jobs/", {
+                position,
+                company,
+                jobLocation,
+                jobType,
+                status,
+            });
 
             dispatch({
                 type: CREATE_JOB_SUCCESS,
@@ -218,18 +266,18 @@ const AppProvider = ({ children }) => {
                     type: CREATE_JOB_ERROR,
                     payload: {
                         msg: error.response.data.msg,
-                    }
+                    },
                 });
             }
         }
-        setTimeout(clearAlert, 3000); 
-    }
+        setTimeout(clearAlert, 3000);
+    };
 
     const getAllJobs = async () => {
         // more functionalities will be added later
         // that's why we use template strings
         const url = `/jobs`;
-        
+
         dispatch({
             type: GET_ALL_JOBS_BEGIN,
         });
@@ -244,15 +292,16 @@ const AppProvider = ({ children }) => {
             dispatch({
                 type: GET_ALL_JOBS_SUCCESS,
                 payload: {
-                    jobs, 
-                    totalJobs, 
-                    numPages
-                }
+                    jobs,
+                    totalJobs,
+                    numPages,
+                },
             });
         } catch (error) {
             console.log(error.response);
+            // logoutUser()
         }
-    }
+    };
 
     const setEditJob = (id) => {
         const job = appInfo.jobs.find((el) => el._id === id);
@@ -261,11 +310,11 @@ const AppProvider = ({ children }) => {
         dispatch({
             type: SET_EDIT_JOB,
             payload: {
-                _id, 
-                position, 
-                company, 
-                jobLocation, 
-                jobType, 
+                _id,
+                position,
+                company,
+                jobLocation,
+                jobType,
                 status,
             },
         });
@@ -277,12 +326,19 @@ const AppProvider = ({ children }) => {
             type: EDIT_JOB_BEGIN,
         });
 
-        const { position, company, jobLocation, jobType, status, editJobId } = appInfo;
+        const { position, company, jobLocation, jobType, status, editJobId } =
+            appInfo;
 
         try {
             const authFetchInstance = getAuthFetchInstance(appInfo.token);
             setAuthFetchInstanceInterceptors(authFetchInstance, logoutUser);
-            await authFetchInstance.patch(`/jobs/${editJobId}`, { position, company, jobLocation, jobType, status });
+            await authFetchInstance.patch(`/jobs/${editJobId}`, {
+                position,
+                company,
+                jobLocation,
+                jobType,
+                status,
+            });
 
             dispatch({
                 type: EDIT_JOB_SUCCESS,
@@ -296,12 +352,12 @@ const AppProvider = ({ children }) => {
                     type: EDIT_JOB_ERROR,
                     payload: {
                         msg: error.response.data.msg,
-                    }
+                    },
                 });
             }
         }
-        setTimeout(clearAlert, 3000); 
-    }
+        setTimeout(clearAlert, 3000);
+    };
 
     const deleteJob = async (jobId) => {
         dispatch({
@@ -319,11 +375,55 @@ const AppProvider = ({ children }) => {
         }
     };
 
+    const showStats = async () => {
+        // similar to getAllJobs()
+        dispatch({
+            type: SHOW_STATS_BEGIN,
+        });
+
+        try {
+            const authFetchInstance = getAuthFetchInstance(appInfo.token);
+            setAuthFetchInstanceInterceptors(authFetchInstance, logoutUser);
+            const { data } = await authFetchInstance.get("/jobs/stats");
+            const { stats, monthlyApplications } = data;
+
+            dispatch({
+                type: SHOW_STATS_SUCCESS,
+                payload: {
+                    stats,
+                    monthlyApplications,
+                },
+            });
+        } catch (error) {
+            console.log(error.response);
+            // logoutUser();
+        }
+    };
+
     return (
         // expand the state obj appInfo so that we can directly access fields in the consumers
-        <AppInfoContext.Provider value={{...appInfo, displayAlert, clearAlert, registerUser, loginUser, toggleSidebar, logoutUser, updateUser, handleJobForm, clearJobForm, createJob, getAllJobs, setEditJob, deleteJob, editJob}}>
+        <AppInfoContext.Provider
+            value={{
+                ...appInfo,
+                displayAlert,
+                clearAlert,
+                registerUser,
+                loginUser,
+                toggleSidebar,
+                logoutUser,
+                updateUser,
+                handleJobForm,
+                clearJobForm,
+                createJob,
+                getAllJobs,
+                setEditJob,
+                deleteJob,
+                editJob,
+                showStats,
+            }}
+        >
             <DispatchContext.Provider value={dispatch}>
-            {children}
+                {children}
             </DispatchContext.Provider>
         </AppInfoContext.Provider>
     );

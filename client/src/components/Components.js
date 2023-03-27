@@ -9,5 +9,21 @@ import JobsContainer from "./JobsContainer";
 import SearchContainer from "./SearchContainer";
 import JobCard from "./JobCard";
 import JobInfo from "./JobInfo";
+import StatsContainer from "./StatsContainer";
+import ChartsContainer from "./ChartsContainer";
 
-export { Logo, FormRow, Alert, Navbar, SmallSideBar, BigSideBar, FormRowSelect, JobsContainer, SearchContainer, JobCard, JobInfo };
+export {
+    Logo,
+    FormRow,
+    Alert,
+    Navbar,
+    SmallSideBar,
+    BigSideBar,
+    FormRowSelect,
+    JobsContainer,
+    SearchContainer,
+    JobCard,
+    JobInfo,
+    StatsContainer,
+    ChartsContainer,
+};

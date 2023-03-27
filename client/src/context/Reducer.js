@@ -1,4 +1,32 @@
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, TOGGLE_SIDEBAR, LOGOUT_USER, UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR, HANDLE_JOB_FORM, CLEAR_JOB_FORM, CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, SET_EDIT_JOB, DELETE_JOB_BEGIN, EDIT_JOB_SUCCESS, EDIT_JOB_BEGIN, EDIT_JOB_ERROR } from "./action";
+import {
+    CLEAR_ALERT,
+    DISPLAY_ALERT,
+    REGISTER_USER_BEGIN,
+    REGISTER_USER_ERROR,
+    REGISTER_USER_SUCCESS,
+    LOGIN_USER_BEGIN,
+    LOGIN_USER_ERROR,
+    LOGIN_USER_SUCCESS,
+    TOGGLE_SIDEBAR,
+    LOGOUT_USER,
+    UPDATE_USER_BEGIN,
+    UPDATE_USER_SUCCESS,
+    UPDATE_USER_ERROR,
+    HANDLE_JOB_FORM,
+    CLEAR_JOB_FORM,
+    CREATE_JOB_BEGIN,
+    CREATE_JOB_SUCCESS,
+    CREATE_JOB_ERROR,
+    GET_ALL_JOBS_BEGIN,
+    GET_ALL_JOBS_SUCCESS,
+    SET_EDIT_JOB,
+    DELETE_JOB_BEGIN,
+    EDIT_JOB_SUCCESS,
+    EDIT_JOB_BEGIN,
+    EDIT_JOB_ERROR,
+    SHOW_STATS_BEGIN,
+    SHOW_STATS_SUCCESS,
+} from "./action";
 import { initialAppInfo } from "./appContext";
 
 const appInfoReducer = (state, action) => {
@@ -6,18 +34,18 @@ const appInfoReducer = (state, action) => {
         return {
             ...state,
             showAlert: true,
-            alertType: 'danger',
-            alertText: 'Oops... Please provide all values!'
+            alertType: "danger",
+            alertText: "Oops... Please provide all values!",
         };
     }
     if (action.type === CLEAR_ALERT) {
         return {
             ...state,
             showAlert: false,
-            alertType: '',
-            alertText: '',
+            alertType: "",
+            alertText: "",
         };
-    } 
+    }
     if (action.type === REGISTER_USER_BEGIN) {
         return {
             ...state,
@@ -31,16 +59,16 @@ const appInfoReducer = (state, action) => {
             user: action.payload.user,
             token: action.payload.token,
             showAlert: true,
-            alertType: 'success',
-            alertText: 'Successfully registered! Redirecting...',
+            alertType: "success",
+            alertText: "Successfully registered! Redirecting...",
         };
-    } 
+    }
     if (action.type === REGISTER_USER_ERROR) {
         return {
             ...state,
             isLoading: false,
             showAlert: true,
-            alertType: 'danger',
+            alertType: "danger",
             alertText: `Something went wrong: ${action.payload.msg}`,
         };
     }
@@ -57,19 +85,19 @@ const appInfoReducer = (state, action) => {
             user: action.payload.user,
             token: action.payload.token,
             showAlert: true,
-            alertType: 'success',
-            alertText: 'Login successful! Redirecting...',
+            alertType: "success",
+            alertText: "Login successful! Redirecting...",
         };
-    } 
+    }
     if (action.type === LOGIN_USER_ERROR) {
         return {
             ...state,
             isLoading: false,
             showAlert: true,
-            alertType: 'danger',
+            alertType: "danger",
             alertText: `Something went wrong: ${action.payload.msg}`,
         };
-    }   
+    }
     if (action.type === TOGGLE_SIDEBAR) {
         return {
             ...state,
@@ -88,7 +116,7 @@ const appInfoReducer = (state, action) => {
             ...state,
             isLoading: true,
         };
-    }    
+    }
     if (action.type === UPDATE_USER_SUCCESS) {
         return {
             ...state,
@@ -96,16 +124,16 @@ const appInfoReducer = (state, action) => {
             user: action.payload.user,
             token: action.payload.token,
             showAlert: true,
-            alertType: 'success',
-            alertText: 'Update Successful!',
+            alertType: "success",
+            alertText: "Update Successful!",
         };
-    }  
+    }
     if (action.type === UPDATE_USER_ERROR) {
         return {
             ...state,
             isLoading: false,
             showAlert: true,
-            alertType: 'danger',
+            alertType: "danger",
             alertText: `Something went wrong: ${action.payload.msg}`,
         };
     }
@@ -120,14 +148,14 @@ const appInfoReducer = (state, action) => {
             ...state,
             // reset all job-related states to default
             isEditingJob: false,
-            editJobId: '',
-            position: '',
-            company: '',
-            jobLocation: '',
-            jobTypeOptions: ['full-time', 'part-time', 'internship'],
-            jobType: 'full-time',
-            statusOptions: ['interviewing', 'declined', 'pending', 'accepted'],
-            status: 'pending',
+            editJobId: "",
+            position: "",
+            company: "",
+            jobLocation: "",
+            jobTypeOptions: ["full-time", "part-time", "internship"],
+            jobType: "full-time",
+            statusOptions: ["interviewing", "declined", "pending", "accepted"],
+            status: "pending",
         };
     }
     if (action.type === CREATE_JOB_BEGIN) {
@@ -135,22 +163,22 @@ const appInfoReducer = (state, action) => {
             ...state,
             isLoading: true,
         };
-    }    
+    }
     if (action.type === CREATE_JOB_SUCCESS) {
         return {
             ...state,
             isLoading: false,
             showAlert: true,
-            alertType: 'success',
-            alertText: 'New Job Created!',
+            alertType: "success",
+            alertText: "New Job Created!",
         };
-    }  
+    }
     if (action.type === CREATE_JOB_ERROR) {
         return {
             ...state,
             isLoading: false,
             showAlert: true,
-            alertType: 'danger',
+            alertType: "danger",
             alertText: `Something went wrong: ${action.payload.msg}`,
         };
     }
@@ -158,6 +186,7 @@ const appInfoReducer = (state, action) => {
         return {
             ...state,
             isLoading: true,
+            showAlert: false,
         };
     }
     if (action.type === GET_ALL_JOBS_SUCCESS) {
@@ -171,13 +200,13 @@ const appInfoReducer = (state, action) => {
     }
     if (action.type === SET_EDIT_JOB) {
         return {
-            ...state, 
+            ...state,
             isEditingJob: true,
             editJobId: action.payload._id,
             position: action.payload.position,
-            company: action.payload.company, 
+            company: action.payload.company,
             jobLocation: action.payload.jobLocation,
-            jobType: action.payload.jobType, 
+            jobType: action.payload.jobType,
             status: action.payload.status,
         };
     }
@@ -185,30 +214,45 @@ const appInfoReducer = (state, action) => {
         return {
             ...state,
             isLoading: true,
-        }
+        };
     }
     if (action.type === EDIT_JOB_BEGIN) {
         return {
             ...state,
             isLoading: true,
         };
-    }    
+    }
     if (action.type === EDIT_JOB_SUCCESS) {
         return {
             ...state,
             isLoading: false,
             showAlert: true,
-            alertType: 'success',
-            alertText: 'Job updated!',
+            alertType: "success",
+            alertText: "Job updated!",
         };
-    }  
+    }
     if (action.type === EDIT_JOB_ERROR) {
         return {
             ...state,
             isLoading: false,
             showAlert: true,
-            alertType: 'danger',
+            alertType: "danger",
             alertText: `Something went wrong: ${action.payload.msg}`,
+        };
+    }
+    if (action.type === SHOW_STATS_BEGIN) {
+        return {
+            ...state,
+            isLoading: true,
+            showAlert: false,
+        };
+    }
+    if (action.type === SHOW_STATS_SUCCESS) {
+        return {
+            ...state,
+            isLoading: false,
+            stats: action.payload.stats,
+            monthlyApplications: action.payload.monthlyApplications,
         };
     }
     throw new Error(`No such action: ${action}`);
