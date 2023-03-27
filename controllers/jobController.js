@@ -102,7 +102,12 @@ const showStats = async (req, res) => {
     statusArr.forEach((statusType) => {
         defaultStats[statusType] = stats[statusType] || 0;
     });
-    res.status(StatusCodes.OK).json(defaultStats);
+
+    let monthlyApplications = [];
+    res.status(StatusCodes.OK).json({
+        stats: defaultStats,
+        monthlyApplications,
+    });
 };
 
 export { createJob, deleteJob, getAllJobs, updateJob, showStats };
