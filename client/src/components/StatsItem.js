@@ -1,8 +1,14 @@
-const StatsItem = () => {
+import Wrapper from "../assets/wrappers/StatsItem";
+const StatsItem = (props) => {
+    const { title, count, icon, color, bcg } = props;
     return (
-        <div>
-            <h1>Stats Item</h1>
-        </div>
+        <Wrapper color={color} bcg={bcg}>
+            <header>
+                <span className="count">{count}</span>
+                <span className="icon">{icon}</span>
+            </header>
+            <h5 className="title">{title}</h5>
+        </Wrapper>
     );
 };
 
