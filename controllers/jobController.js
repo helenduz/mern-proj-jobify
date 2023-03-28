@@ -5,6 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import { BadRequestError, NotFoundError, UnauthenticatedError } from "../errors/controller-errors.js";
 import checkPermissions from "../utils/checkPermissions.js";
 import mongoose from "mongoose";
+import moment from "moment";
 
 const createJob = async (req, res) => {
     // check for empty fields (that are required and don't have default values)
@@ -103,7 +104,41 @@ const showStats = async (req, res) => {
         defaultStats[statusType] = stats[statusType] || 0;
     });
 
-    let monthlyApplications = [];
+    let monthlyApplications = await Job.aggregate([
+        // filter jobs by userId
+        { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+        // group by {year, month} combination
+        {
+            $group: {
+                _id: {
+                    year: { $year: "$createdAt" },
+                    month: { $month: "$createdAt" },
+                },
+                count: { $sum: 1 },
+            },
+        },
+        // sort first by year then by month, descending
+        // notice that fields we sort on are fields from output of previous stage
+        { $sort: { "_id.year": -1, "_id.month": -1 } },
+        { $limit: 6 }, // getting latest 6 months
+    ]);
+
+    // format monthlyApplications such that each item is { date: “nicelyFormattedDateString”, count: X }
+    monthlyApplications = monthlyApplications
+        .map((item) => {
+            const {
+                _id: { month, year },
+                count,
+            } = item;
+            // moment.js month is from 0 to 11 while it is from 1 to 12 from mongoDB $month operator
+            const date = moment()
+                .month(month - 1)
+                .year(year)
+                .format("MMM Y");
+            return { date, count };
+        })
+        .reverse(); // start from earliest month instead
+
     res.status(StatusCodes.OK).json({
         stats: defaultStats,
         monthlyApplications,
