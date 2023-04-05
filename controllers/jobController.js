@@ -25,8 +25,56 @@ const createJob = async (req, res) => {
 };
 
 const getAllJobs = async (req, res) => {
-    // find all jobs created by user
-    const jobs = await Job.find({ createdBy: req.user.userId });
+    // getting query string params
+    const { searchField, status, jobType, sort } = req.query;
+    if (!status || !jobType || !sort) {
+        throw new BadRequestError(
+            "Server Controller Checks: required fields: status, jobType, and sort"
+        );
+    }
+
+    // build query object based on query string param
+    let queryObject = { createdBy: req.user.userId };
+    if (status !== "all") {
+        queryObject.status = status;
+    }
+    if (jobType !== "all") {
+        queryObject.jobType = jobType;
+    }
+    if (searchField) {
+        queryObject = {
+            ...queryObject,
+            $or: [
+                // for each of the 3 fields below,
+                // match anything in the searchField string
+                // option "i" means case-insensitive
+                { position: { $regex: searchField, $options: "i" } },
+                { company: { $regex: searchField, $options: "i" } },
+                { jobLocation: { $regex: searchField, $options: "i" } },
+            ],
+        };
+    }
+
+    // no await to let it return a query
+    let result = Job.find(queryObject);
+
+    // chain sorting conditions
+    if (sort === "latest") {
+        result = result.sort("-createdAt");
+    }
+    if (sort === "oldest") {
+        result = result.sort("-createdAt");
+    }
+    if (sort === "a-z") {
+        result = result.sort("company");
+    }
+
+    if (sort === "z-a") {
+        result = result.sort("-company");
+    }
+
+    // get result
+    const jobs = await result;
 
     res.status(StatusCodes.OK).json({
         jobs,
