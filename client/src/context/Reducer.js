@@ -12,7 +12,7 @@ import {
     UPDATE_USER_BEGIN,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_ERROR,
-    HANDLE_JOB_FORM,
+    HANDLE_FORM_CHANGE,
     CLEAR_JOB_FORM,
     CREATE_JOB_BEGIN,
     CREATE_JOB_SUCCESS,
@@ -26,6 +26,7 @@ import {
     EDIT_JOB_ERROR,
     SHOW_STATS_BEGIN,
     SHOW_STATS_SUCCESS,
+    CLEAR_SEARCH_FORM,
 } from "./action";
 import { initialAppInfo } from "./appContext";
 
@@ -137,7 +138,7 @@ const appInfoReducer = (state, action) => {
             alertText: `Something went wrong: ${action.payload.msg}`,
         };
     }
-    if (action.type === HANDLE_JOB_FORM) {
+    if (action.type === HANDLE_FORM_CHANGE) {
         return {
             ...state,
             [action.payload.propertyName]: action.payload.propertyValue,
@@ -152,9 +153,7 @@ const appInfoReducer = (state, action) => {
             position: "",
             company: "",
             jobLocation: "",
-            jobTypeOptions: ["full-time", "part-time", "internship"],
             jobType: "full-time",
-            statusOptions: ["interviewing", "declined", "pending", "accepted"],
             status: "pending",
         };
     }
@@ -253,6 +252,15 @@ const appInfoReducer = (state, action) => {
             isLoading: false,
             stats: action.payload.stats,
             monthlyApplications: action.payload.monthlyApplications,
+        };
+    }
+    if (action.type === CLEAR_SEARCH_FORM) {
+        return {
+            ...state,
+            searchField: "",
+            searchJobType: "all",
+            searchStatus: "all",
+            sort: "latest",
         };
     }
     throw new Error(`No such action: ${action}`);

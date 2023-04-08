@@ -15,7 +15,7 @@ import {
     UPDATE_USER_BEGIN,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_ERROR,
-    HANDLE_JOB_FORM,
+    HANDLE_FORM_CHANGE,
     CLEAR_JOB_FORM,
     CREATE_JOB_BEGIN,
     CREATE_JOB_SUCCESS,
@@ -29,6 +29,7 @@ import {
     EDIT_JOB_ERROR,
     SHOW_STATS_BEGIN,
     SHOW_STATS_SUCCESS,
+    CLEAR_SEARCH_FORM,
 } from "./action";
 import axios from "axios";
 import {
@@ -64,6 +65,12 @@ const initialAppInfo = {
     numPages: 0,
     stats: {},
     monthlyApplications: [],
+    // search/sort related states
+    searchField: "",
+    searchJobType: "all",
+    searchStatus: "all",
+    sort: "latest",
+    sortOptions: ["latest", "oldest", "company (A-Z)", "company (Z-A)"],
 };
 
 const addToLocalStorage = ({ user, token }) => {
@@ -219,9 +226,9 @@ const AppProvider = ({ children }) => {
         setTimeout(clearAlert, 3000);
     };
 
-    const handleJobForm = ({ propertyName, propertyValue }) => {
+    const handleFormChange = ({ propertyName, propertyValue }) => {
         dispatch({
-            type: HANDLE_JOB_FORM,
+            type: HANDLE_FORM_CHANGE,
             payload: {
                 propertyName,
                 propertyValue,
@@ -274,9 +281,13 @@ const AppProvider = ({ children }) => {
     };
 
     const getAllJobs = async () => {
-        // more functionalities will be added later
-        // that's why we use template strings
-        const url = `/jobs`;
+        const { searchField, searchJobType, searchStatus, sort } = appInfo;
+        // required query string params: searchJobType, searchStatus, sort
+        let url = `/jobs?status=${searchStatus}&jobType=${searchJobType}&sort=${sort}`;
+        // optional query string param: searchField
+        if (searchField) {
+            url = url + `&searchField=${searchField}`;
+        }
 
         dispatch({
             type: GET_ALL_JOBS_BEGIN,
@@ -400,6 +411,12 @@ const AppProvider = ({ children }) => {
         }
     };
 
+    const clearSearchForm = () => {
+        dispatch({
+            type: CLEAR_SEARCH_FORM,
+        });
+    };
+
     return (
         // expand the state obj appInfo so that we can directly access fields in the consumers
         <AppInfoContext.Provider
@@ -412,7 +429,7 @@ const AppProvider = ({ children }) => {
                 toggleSidebar,
                 logoutUser,
                 updateUser,
-                handleJobForm,
+                handleFormChange,
                 clearJobForm,
                 createJob,
                 getAllJobs,
@@ -420,6 +437,7 @@ const AppProvider = ({ children }) => {
                 deleteJob,
                 editJob,
                 showStats,
+                clearSearchForm,
             }}
         >
             <DispatchContext.Provider value={dispatch}>

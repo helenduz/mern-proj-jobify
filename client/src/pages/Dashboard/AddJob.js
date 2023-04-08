@@ -4,41 +4,44 @@ import { FormRow, Alert, FormRowSelect } from "../../components/Components";
 
 const AddJob = () => {
   const {
-    isLoading,
-    isEditingJob,
-    showAlert,
-    displayAlert,
-    position,
-    company,
-    jobLocation,
-    jobType,
-    jobTypeOptions,
-    status,
-    statusOptions,
-    handleJobForm,
-    clearJobForm,
-    createJob,
-    editJob,
+      isLoading,
+      isEditingJob,
+      showAlert,
+      displayAlert,
+      position,
+      company,
+      jobLocation,
+      jobType,
+      jobTypeOptions,
+      status,
+      statusOptions,
+      handleFormChange,
+      clearJobForm,
+      createJob,
+      editJob,
   } = useAppContext();
 
   // Sanity check and calls handler for sending request
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!position || !company) {
-      displayAlert();
-      return;
-    }
-    if (isEditingJob) {
-      editJob();
-      return;
-    }
-    createJob();
-  }
+      e.preventDefault();
+      if (!position || !company) {
+          displayAlert();
+          return;
+      }
+      if (isEditingJob) {
+          editJob();
+          return;
+      }
+      createJob();
+  };
 
   // Updates job-related global states on input
   const handleJobInput = (e) => {
-    handleJobForm({ propertyName: e.target.name, propertyValue: e.target.value});
-  }
+      handleFormChange({
+          propertyName: e.target.name,
+          propertyValue: e.target.value,
+      });
+  };
 
   return (
     <Wrapper>
