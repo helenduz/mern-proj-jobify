@@ -63,13 +63,13 @@ const getAllJobs = async (req, res) => {
         result = result.sort("-createdAt");
     }
     if (sort === "oldest") {
-        result = result.sort("-createdAt");
+        result = result.sort("createdAt");
     }
-    if (sort === "a-z") {
+    if (sort === "company (A-Z)") {
         result = result.sort("company");
     }
 
-    if (sort === "z-a") {
+    if (sort === "company (Z-A)") {
         result = result.sort("-company");
     }
 
