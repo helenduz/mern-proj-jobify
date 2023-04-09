@@ -37,13 +37,15 @@ const JobsContainer = () => {
 
     return (
         <Wrapper>
-            <h5>{`${totalJobs} Job${totalJobs > 1 && 's'} found`}</h5>
+            <h5>
+                {totalJobs} Job{totalJobs > 1 && "s"} found
+            </h5>
             <div className="jobs">
                 {jobs.map((job) => {
-                    return <JobCard key={job._id} job={job}/>;
+                    return <JobCard key={job._id} job={job} />;
                 })}
             </div>
-        {/* Pagination buttons (Later) */}
+            {/* Pagination buttons (Later) */}
         </Wrapper>
     );
     

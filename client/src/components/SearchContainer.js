@@ -32,7 +32,8 @@ const SearchContainer = () => {
                     {/* text input searchField */}
                     <FormRow
                         type="text"
-                        name="search Field"
+                        labelText="Keyword"
+                        name="searchField"
                         value={searchField}
                         handleInput={handleSearchInput}
                     />
