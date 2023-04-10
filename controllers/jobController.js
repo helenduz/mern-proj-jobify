@@ -73,13 +73,23 @@ const getAllJobs = async (req, res) => {
         result = result.sort("-company");
     }
 
-    // get result
+    // limit and skip for pagination (returning only jobs for that page)
+    const page = Number(req.query.page) || 1;
+    const numJobsPerPage = Number(req.query.numJobsPerPage) || 10;
+    const numToSkip = (page - 1) * numJobsPerPage;
+    result = result.skip(numToSkip).limit(numJobsPerPage);
+
+    // get result (after filter, sort, skip, and limit)
     const jobs = await result;
+
+    // calculate totalJobs and numPages
+    const totalJobs = await Job.countDocuments(queryObject);
+    const numPages = Math.ceil(totalJobs / numJobsPerPage);
 
     res.status(StatusCodes.OK).json({
         jobs,
-        totalJobs: jobs.length,
-        numPages: 1,
+        totalJobs: totalJobs,
+        numPages: numPages,
     });
 };
 
