@@ -27,6 +27,7 @@ import {
     SHOW_STATS_BEGIN,
     SHOW_STATS_SUCCESS,
     CLEAR_SEARCH_FORM,
+    CHANGE_PAGE,
 } from "./action";
 import { initialAppInfo } from "./appContext";
 
@@ -141,6 +142,7 @@ const appInfoReducer = (state, action) => {
     if (action.type === HANDLE_FORM_CHANGE) {
         return {
             ...state,
+            page: 1,
             [action.payload.propertyName]: action.payload.propertyValue,
         };
     }
@@ -261,6 +263,12 @@ const appInfoReducer = (state, action) => {
             searchJobType: "all",
             searchStatus: "all",
             sort: "latest",
+        };
+    }
+    if (action.type === CHANGE_PAGE) {
+        return {
+            ...state,
+            page: action.payload.page,
         };
     }
     throw new Error(`No such action: ${action}`);

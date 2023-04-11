@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Loading from "../pages/Dashboard/Loading";
 import Wrapper from "../assets/wrappers/JobsContainer";
 import JobCard from "./JobCard";
+import PageBtnContainer from "./PageBtnContainer";
 
 const JobsContainer = () => {
     const {
@@ -10,6 +11,7 @@ const JobsContainer = () => {
         jobs,
         isLoading,
         page,
+        numPages,
         totalJobs,
         searchField,
         searchJobType,
@@ -19,13 +21,15 @@ const JobsContainer = () => {
 
     useEffect(() => {
         getAllJobs();
-    }, [searchField, searchJobType, searchStatus, sort]);
-    
+    }, [searchField, searchJobType, searchStatus, sort, page]);
+
     if (isLoading) {
         return (
-            <div><Loading center/></div>
+            <div>
+                <Loading center />
+            </div>
         );
-    } 
+    }
 
     if (totalJobs === 0) {
         return (
@@ -45,10 +49,10 @@ const JobsContainer = () => {
                     return <JobCard key={job._id} job={job} />;
                 })}
             </div>
-            {/* Pagination buttons (Later) */}
+            {/* Pagination buttons */}
+            {numPages > 1 && <PageBtnContainer />}
         </Wrapper>
     );
-    
-}
+};
 
 export default JobsContainer;

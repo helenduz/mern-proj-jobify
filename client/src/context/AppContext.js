@@ -30,6 +30,7 @@ import {
     SHOW_STATS_BEGIN,
     SHOW_STATS_SUCCESS,
     CLEAR_SEARCH_FORM,
+    CHANGE_PAGE,
 } from "./action";
 import axios from "axios";
 import {
@@ -61,7 +62,7 @@ const initialAppInfo = {
     status: "pending",
     jobs: [],
     totalJobs: 0,
-    page: 0,
+    page: 1,
     numPages: 0,
     stats: {},
     monthlyApplications: [],
@@ -281,9 +282,11 @@ const AppProvider = ({ children }) => {
     };
 
     const getAllJobs = async () => {
-        const { searchField, searchJobType, searchStatus, sort } = appInfo;
+        // we could pass in numJobsPerPage to backend if we want!
+        const { searchField, searchJobType, searchStatus, sort, page } =
+            appInfo;
         // required query string params: searchJobType, searchStatus, sort
-        let url = `/jobs?status=${searchStatus}&jobType=${searchJobType}&sort=${sort}`;
+        let url = `/jobs?status=${searchStatus}&jobType=${searchJobType}&sort=${sort}&page=${page}`;
         // optional query string param: searchField
         if (searchField) {
             url = url + `&searchField=${searchField}`;
@@ -417,6 +420,13 @@ const AppProvider = ({ children }) => {
         });
     };
 
+    const changePage = (page) => {
+        dispatch({
+            type: CHANGE_PAGE,
+            payload: { page },
+        });
+    };
+
     return (
         // expand the state obj appInfo so that we can directly access fields in the consumers
         <AppInfoContext.Provider
@@ -438,6 +448,7 @@ const AppProvider = ({ children }) => {
                 editJob,
                 showStats,
                 clearSearchForm,
+                changePage,
             }}
         >
             <DispatchContext.Provider value={dispatch}>
