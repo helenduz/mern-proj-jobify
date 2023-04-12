@@ -26,7 +26,8 @@ const createJob = async (req, res) => {
 
 const getAllJobs = async (req, res) => {
     // getting query string params
-    const { searchField, status, jobType, sort } = req.query;
+    const { status, jobType, sort } = req.query;
+    let searchField = req.query.searchField;
     if (!status || !jobType || !sort) {
         throw new BadRequestError(
             "Server Controller Checks: required fields: status, jobType, and sort"
@@ -42,6 +43,8 @@ const getAllJobs = async (req, res) => {
         queryObject.jobType = jobType;
     }
     if (searchField) {
+        // escape all regex special characters (adding \)
+        searchField = searchField.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         queryObject = {
             ...queryObject,
             $or: [
