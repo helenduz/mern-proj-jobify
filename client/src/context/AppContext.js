@@ -382,11 +382,11 @@ const AppProvider = ({ children }) => {
             const authFetchInstance = getAuthFetchInstance(appInfo.token);
             setAuthFetchInstanceInterceptors(authFetchInstance, logoutUser);
             await authFetchInstance.delete(`/jobs/${jobId}`);
-            getAllJobs();
         } catch (error) {
             console.log(error.response);
             // logoutUser();
         }
+        getAllJobs();
     };
 
     const showStats = async () => {
