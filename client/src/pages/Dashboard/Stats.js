@@ -2,9 +2,10 @@ import { StatsContainer, ChartsContainer } from "../../components/Components";
 import { useAppContext } from "../../context/appContext";
 import { useEffect } from "react";
 import Loading from "./Loading";
+import { Alert } from "../../components/Components";
 
 const Stats = () => {
-    const { showStats, stats, monthlyApplications, isLoading } =
+    const { showStats, monthlyApplications, isLoading, showAlert } =
         useAppContext();
 
     useEffect(() => {
@@ -17,6 +18,10 @@ const Stats = () => {
                 <Loading center />
             </div>
         );
+    }
+
+    if (showAlert) {
+        return <Alert />;
     }
 
     return (

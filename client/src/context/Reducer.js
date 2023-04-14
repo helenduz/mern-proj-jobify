@@ -28,6 +28,8 @@ import {
     SHOW_STATS_SUCCESS,
     CLEAR_SEARCH_FORM,
     CHANGE_PAGE,
+    SHOW_STATS_ERROR,
+    GET_ALL_JOBS_ERROR,
 } from "./action";
 import { initialAppInfo } from "./appContext";
 
@@ -199,6 +201,15 @@ const appInfoReducer = (state, action) => {
             numPages: action.payload.numPages,
         };
     }
+    if (action.type === GET_ALL_JOBS_ERROR) {
+        return {
+            ...state,
+            isLoading: false,
+            showAlert: true,
+            alertType: "danger",
+            alertText: `Something went wrong: ${action.payload.msg}`,
+        };
+    }
     if (action.type === SET_EDIT_JOB) {
         return {
             ...state,
@@ -254,6 +265,15 @@ const appInfoReducer = (state, action) => {
             isLoading: false,
             stats: action.payload.stats,
             monthlyApplications: action.payload.monthlyApplications,
+        };
+    }
+    if (action.type === SHOW_STATS_ERROR) {
+        return {
+            ...state,
+            isLoading: false,
+            showAlert: true,
+            alertType: "danger",
+            alertText: `Something went wrong: ${action.payload.msg}`,
         };
     }
     if (action.type === CLEAR_SEARCH_FORM) {

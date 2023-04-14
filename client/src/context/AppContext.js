@@ -31,6 +31,7 @@ import {
     SHOW_STATS_SUCCESS,
     CLEAR_SEARCH_FORM,
     CHANGE_PAGE,
+    SHOW_STATS_ERROR,
 } from "./action";
 import axios from "axios";
 import {
@@ -314,6 +315,14 @@ const AppProvider = ({ children }) => {
         } catch (error) {
             console.log(error.response);
             // logoutUser()
+            if (error.response.status !== 401) {
+                dispatch({
+                    type: SHOW_STATS_ERROR,
+                    payload: {
+                        msg: `${error.response.data.msg} Please refresh!`,
+                    },
+                });
+            }
         }
     };
 
@@ -411,6 +420,14 @@ const AppProvider = ({ children }) => {
         } catch (error) {
             console.log(error.response);
             // logoutUser();
+            if (error.response.status !== 401) {
+                dispatch({
+                    type: SHOW_STATS_ERROR,
+                    payload: {
+                        msg: `${error.response.data.msg} Please refresh!`,
+                    },
+                });
+            }
         }
     };
 

@@ -4,6 +4,7 @@ import Loading from "../pages/Dashboard/Loading";
 import Wrapper from "../assets/wrappers/JobsContainer";
 import JobCard from "./JobCard";
 import PageBtnContainer from "./PageBtnContainer";
+import { Alert } from "./Components";
 
 const JobsContainer = () => {
     const {
@@ -17,6 +18,7 @@ const JobsContainer = () => {
         searchJobType,
         searchStatus,
         sort,
+        showAlert,
     } = useAppContext();
 
     useEffect(() => {
@@ -29,6 +31,10 @@ const JobsContainer = () => {
                 <Loading center />
             </div>
         );
+    }
+
+    if (showAlert) {
+        return <Alert />;
     }
 
     if (totalJobs === 0) {
