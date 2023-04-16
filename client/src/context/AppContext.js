@@ -32,6 +32,8 @@ import {
     CLEAR_SEARCH_FORM,
     CHANGE_PAGE,
     SHOW_STATS_ERROR,
+    DELETE_JOB_ERROR,
+    DELETE_JOB_SUCCESS,
 } from "./action";
 import axios from "axios";
 import {
@@ -54,6 +56,7 @@ const initialAppInfo = {
     // job related states
     isEditingJob: false,
     editJobId: "",
+    deleteJobId: "",
     position: "",
     company: "",
     jobLocation: "",
@@ -73,6 +76,9 @@ const initialAppInfo = {
     searchStatus: "all",
     sort: "latest",
     sortOptions: ["latest", "oldest", "company (A-Z)", "company (Z-A)"],
+    // alert and loading state for JobCards
+    isLoadingCard: false,
+    showAlertCard: false,
 };
 
 const addToLocalStorage = ({ user, token }) => {
@@ -385,17 +391,37 @@ const AppProvider = ({ children }) => {
     const deleteJob = async (jobId) => {
         dispatch({
             type: DELETE_JOB_BEGIN,
+            payload: {
+                jobId,
+            },
         });
 
         try {
             const authFetchInstance = getAuthFetchInstance(appInfo.token);
             setAuthFetchInstanceInterceptors(authFetchInstance, logoutUser);
             await authFetchInstance.delete(`/jobs/${jobId}`);
+            dispatch({
+                type: DELETE_JOB_SUCCESS,
+            });
+            await new Promise((resolve) =>
+                setTimeout(() => {
+                    clearAlert();
+                    resolve();
+                }, 3000)
+            );
+            getAllJobs();
         } catch (error) {
             console.log(error.response);
             // logoutUser();
+            if (error.response.status !== 401) {
+                dispatch({
+                    type: DELETE_JOB_ERROR,
+                    payload: {
+                        msg: `${error.response.data.msg} Please refresh!`,
+                    },
+                });
+            }
         }
-        getAllJobs();
     };
 
     const showStats = async () => {

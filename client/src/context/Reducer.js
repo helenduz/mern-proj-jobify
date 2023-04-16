@@ -30,6 +30,8 @@ import {
     CHANGE_PAGE,
     SHOW_STATS_ERROR,
     GET_ALL_JOBS_ERROR,
+    DELETE_JOB_SUCCESS,
+    DELETE_JOB_ERROR,
 } from "./action";
 import { initialAppInfo } from "./appContext";
 
@@ -46,6 +48,7 @@ const appInfoReducer = (state, action) => {
         return {
             ...state,
             showAlert: false,
+            showAlertCard: false,
             alertType: "",
             alertText: "",
         };
@@ -225,7 +228,26 @@ const appInfoReducer = (state, action) => {
     if (action.type === DELETE_JOB_BEGIN) {
         return {
             ...state,
-            isLoading: true,
+            isLoadingCard: true,
+            deleteJobId: action.payload.jobId,
+        };
+    }
+    if (action.type === DELETE_JOB_SUCCESS) {
+        return {
+            ...state,
+            isLoadingCard: false,
+            showAlertCard: true,
+            alertType: "success",
+            alertText: "Job deleted! Refreshing...",
+        };
+    }
+    if (action.type === DELETE_JOB_ERROR) {
+        return {
+            ...state,
+            isLoadingCard: false,
+            showAlertCard: true,
+            alertType: "danger",
+            alertText: `Something went wrong: ${action.payload.msg}`,
         };
     }
     if (action.type === EDIT_JOB_BEGIN) {
