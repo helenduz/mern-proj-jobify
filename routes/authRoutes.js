@@ -4,9 +4,16 @@ import authenticateUser from '../middleware/authenticateUser.js'
 const authRouter = express.Router();
 
 import { register, login, updateUser } from '../controllers/authController.js'
+import { rateLimiter } from "express-rate-limit";
 
-authRouter.route('/register').post(register);
-authRouter.route('/login').post(login);
+const authRoutesLimiter = rateLimiter({
+    windowMs: 15 * 60 * 10000, // 15 mins
+    max: 10,
+    message: "API request rate limit exceeded, please wait and try again",
+});
+
+authRouter.route("/register").post(authRoutesLimiter, register);
+authRouter.route("/login").post(authRoutesLimiter, login);
 authRouter.route('/updateUser').patch(authenticateUser, updateUser);
 
 export default authRouter;

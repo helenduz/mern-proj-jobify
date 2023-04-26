@@ -5,10 +5,18 @@ import 'express-async-errors';
 import * as dotenv from 'dotenv';
 dotenv.config()
 
+// helper & security middlewares
 import morgan from 'morgan';
-if (process.env.NODE_ENV !== 'production') {
-   app.use(morgan('dev'));
+import helmet from "helmet";
+import xss from "xss-clean";
+import mongoSanitize from "express-mongo-sanitize";
+if (process.env.NODE_ENV !== "production") {
+    app.use(morgan("dev"));
 }
+app.use(express.json());
+app.use(helmet());
+app.use(xss());
+app.use(mongoSanitize());
 
 // set up static assets path
 import { dirname } from "path";
@@ -29,7 +37,6 @@ import authenticateUser from './middleware/authenticateUser.js';
 
 
 // request handling chain
-app.use(express.json());
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/jobs', authenticateUser, jobRouter);
 if (process.env.NODE_ENV == "production") {
