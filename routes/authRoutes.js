@@ -4,7 +4,7 @@ import authenticateUser from '../middleware/authenticateUser.js'
 const authRouter = express.Router();
 
 import { register, login, updateUser } from '../controllers/authController.js'
-import { rateLimiter } from "express-rate-limit";
+import rateLimiter from "express-rate-limit";
 
 const authRoutesLimiter = rateLimiter({
     windowMs: 15 * 60 * 10000, // 15 mins

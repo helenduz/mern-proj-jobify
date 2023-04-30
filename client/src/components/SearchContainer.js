@@ -1,8 +1,10 @@
 import { useAppContext } from "../context/appContext";
 import Wrapper from "../assets/wrappers/SearchContainer";
 import { FormRow, Alert, FormRowSelect } from "./Components";
+import { useMemo, useState } from "react";
 
 const SearchContainer = () => {
+    const [localSearchField, setLocalSearchField] = useState("");
     const {
         isLoading,
         jobTypeOptions,
@@ -23,6 +25,24 @@ const SearchContainer = () => {
         });
     };
 
+    const debounce = () => {
+        let timeoutID;
+        return (e) => {
+            setLocalSearchField(e.target.value);
+            clearTimeout(timeoutID);
+            timeoutID = setTimeout(() => {
+                // updates global state every 0.7 seconds
+                // after the last key stroke
+                handleFormChange({
+                    propertyName: e.target.name, // "searchField"
+                    propertyValue: e.target.value, // cannot be localSearchField since react might batch state updates
+                });
+            }, 700);
+        };
+    };
+
+    const debounceReturnFunc = useMemo(() => debounce(), []);
+
     return (
         <Wrapper>
             {/* form */}
@@ -34,8 +54,8 @@ const SearchContainer = () => {
                         type="text"
                         labelText="Keyword"
                         name="searchField"
-                        value={searchField}
-                        handleInput={handleSearchInput}
+                        value={localSearchField}
+                        handleInput={debounceReturnFunc}
                     />
                     {/* Job type, status, and sort dropdowns */}
                     <FormRowSelect
@@ -63,6 +83,7 @@ const SearchContainer = () => {
                         className="btn btn-block btn-danger"
                         onClick={(e) => {
                             e.preventDefault();
+                            setLocalSearchField("");
                             clearSearchForm();
                         }}
                     >
