@@ -78,26 +78,52 @@ const Register = () => {
   );
 
   return (
-    <Wrapper className='full-page'>
-      <form onSubmit={handleSubmit} className='form'>
-      <Logo/>
-      {/* Title and alert */}
-      <h3>{inputState.isMember ? "Login" : "Register"}</h3>
-      {showAlert && <Alert/>}
+      <Wrapper className="full-page">
+          <form onSubmit={handleSubmit} className="form">
+              <Logo />
+              {/* Title and alert */}
+              <h3>{inputState.isMember ? "Login" : "Register"}</h3>
+              {showAlert && <Alert />}
 
-      {/* Input and submit button */}
-      {inputState.isMember ? loginFormRows : registerFormRows}
-      <button disabled={isLoading} type='submit' className='btn  btn-block'>Submit</button>
+              {/* Input and submit button */}
+              {inputState.isMember ? loginFormRows : registerFormRows}
+              <button
+                  disabled={isLoading}
+                  type="submit"
+                  className="btn  btn-block"
+              >
+                  Submit
+              </button>
+              {/* demo user button */}
+              <button
+                  disabled={isLoading}
+                  type="button"
+                  className="btn  btn-block btn-hipster"
+                  onClick={() => {
+                      loginUser({
+                          email: "test@gmail.com",
+                          password: "test12345",
+                      });
+                  }}
+              >
+                  Just show me a demo!
+              </button>
 
-      {/* Toggle register/login */}
-      <p>
-        {inputState.isMember ? "Not yet a member?" : "Already a member?"}
-        <button type='button' onClick={toggleForm} className="member-btn">
-        {inputState.isMember ? "Register" : "Login"}
-        </button>
-      </p>
-      </form>
-    </Wrapper> 
+              {/* Toggle register/login */}
+              <p>
+                  {inputState.isMember
+                      ? "Not yet a member?"
+                      : "Already a member?"}
+                  <button
+                      type="button"
+                      onClick={toggleForm}
+                      className="member-btn"
+                  >
+                      {inputState.isMember ? "Register" : "Login"}
+                  </button>
+              </p>
+          </form>
+      </Wrapper>
   );
 }
 
