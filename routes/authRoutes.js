@@ -5,6 +5,7 @@ const authRouter = express.Router();
 
 import { register, login, updateUser } from '../controllers/authController.js'
 import rateLimiter from "express-rate-limit";
+import checkDemoUser from "../middleware/checkDemoUser.js";
 
 const authRoutesLimiter = rateLimiter({
     windowMs: 15 * 60 * 10000, // 15 mins
@@ -14,6 +15,8 @@ const authRoutesLimiter = rateLimiter({
 
 authRouter.route("/register").post(authRoutesLimiter, register);
 authRouter.route("/login").post(authRoutesLimiter, login);
-authRouter.route('/updateUser').patch(authenticateUser, updateUser);
+authRouter
+    .route("/updateUser")
+    .patch(authenticateUser, checkDemoUser, updateUser);
 
 export default authRouter;

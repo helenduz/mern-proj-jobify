@@ -11,7 +11,10 @@ const authenticateUser = async (req, res, next) => {
     // Verify signiture is valid
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = { userId: payload.userId };
+        // check if user is demo user
+        const isDemoUser = payload.userId === "646b78dc43c6c604a7d73e0a";
+        // add fields to req object
+        req.user = { userId: payload.userId, isDemoUser };
         next();
     } catch (error) {
         throw new UnauthenticatedError("Auth Middleware: Invalid token");
