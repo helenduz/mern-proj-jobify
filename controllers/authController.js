@@ -10,17 +10,13 @@ const register = async (req, res) => {
     // check for empty fields
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
-        throw new BadRequestError(
-            "Server Controller Checks: please provide all values!"
-        );
+        throw new BadRequestError("Please provide all values!");
     }
 
     // check for duplicate email
     const userAlreadyExist = await User.findOne({ email: email });
     if (userAlreadyExist) {
-        throw new BadRequestError(
-            "Server Controller Checks: this email is already in use!"
-        );
+        throw new BadRequestError("This email is already in use!");
     }
 
     // send response with token
@@ -46,25 +42,19 @@ const login = async (req, res) => {
     // check for empty fields
     const { email, password } = req.body;
     if (!email || !password) {
-        throw new BadRequestError(
-            "Server Controller Checks: please provide all values!"
-        );
+        throw new BadRequestError("Please provide all values!");
     }
 
     // check for user existence
     const user = await User.findOne({ email: email }).select("+password"); // adding the pw field as well for checking below
     if (!user) {
-        throw new UnauthenticatedError(
-            "Server Controller Checks: no user with this email exists!"
-        );
+        throw new UnauthenticatedError("No user with this email exists!");
     }
 
     // check for correct password
     const pwCorrect = await user.checkPassword(password);
     if (!pwCorrect) {
-        throw new UnauthenticatedError(
-            "Server Controller Checks: password is incorrect!"
-        );
+        throw new UnauthenticatedError("Password is incorrect!");
     }
 
     // send response with token
@@ -89,9 +79,7 @@ const updateUser = async (req, res) => {
     const { name, email, lastName, location } = req.body;
     // Check all fields are provided
     if (!name || !email || !lastName || !location) {
-        throw new BadRequestError(
-            "Server Controller Checks: Please provide all values!"
-        );
+        throw new BadRequestError("Please provide all values!");
     }
 
     // Find user document

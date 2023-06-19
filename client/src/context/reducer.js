@@ -76,7 +76,7 @@ const appInfoReducer = (state, action) => {
             isLoading: false,
             showAlert: true,
             alertType: "danger",
-            alertText: `Something went wrong: ${action.payload.msg}`,
+            alertText: `Error: ${action.payload.msg}`,
         };
     }
     if (action.type === LOGIN_USER_BEGIN) {
@@ -102,7 +102,7 @@ const appInfoReducer = (state, action) => {
             isLoading: false,
             showAlert: true,
             alertType: "danger",
-            alertText: `Something went wrong: ${action.payload.msg}`,
+            alertText: `Error: ${action.payload.msg}`,
         };
     }
     if (action.type === TOGGLE_SIDEBAR) {
@@ -141,7 +141,7 @@ const appInfoReducer = (state, action) => {
             isLoading: false,
             showAlert: true,
             alertType: "danger",
-            alertText: `Something went wrong: ${action.payload.msg}`,
+            alertText: `Error: ${action.payload.msg}`,
         };
     }
     if (action.type === HANDLE_FORM_CHANGE) {
@@ -185,7 +185,7 @@ const appInfoReducer = (state, action) => {
             isLoading: false,
             showAlert: true,
             alertType: "danger",
-            alertText: `Something went wrong: ${action.payload.msg}`,
+            alertText: `Error: ${action.payload.msg}`,
         };
     }
     if (action.type === GET_ALL_JOBS_BEGIN) {
@@ -210,7 +210,7 @@ const appInfoReducer = (state, action) => {
             isLoading: false,
             showAlert: true,
             alertType: "danger",
-            alertText: `Something went wrong: ${action.payload.msg}`,
+            alertText: `Error: ${action.payload.msg}`,
         };
     }
     if (action.type === SET_EDIT_JOB) {
@@ -247,7 +247,7 @@ const appInfoReducer = (state, action) => {
             isLoadingCard: false,
             showAlertCard: true,
             alertType: "danger",
-            alertText: `Something went wrong: ${action.payload.msg}`,
+            alertText: `Error: ${action.payload.msg}`,
         };
     }
     if (action.type === EDIT_JOB_BEGIN) {
@@ -271,7 +271,7 @@ const appInfoReducer = (state, action) => {
             isLoading: false,
             showAlert: true,
             alertType: "danger",
-            alertText: `Something went wrong: ${action.payload.msg}`,
+            alertText: `Error: ${action.payload.msg}`,
         };
     }
     if (action.type === SHOW_STATS_BEGIN) {
@@ -295,7 +295,7 @@ const appInfoReducer = (state, action) => {
             isLoading: false,
             showAlert: true,
             alertType: "danger",
-            alertText: `Something went wrong: ${action.payload.msg}`,
+            alertText: `Error: ${action.payload.msg}`,
         };
     }
     if (action.type === CLEAR_SEARCH_FORM) {

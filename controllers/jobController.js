@@ -11,9 +11,7 @@ const createJob = async (req, res) => {
     // check for empty fields (that are required and don't have default values)
     const { position, company } = req.body;
     if (!position || !company) {
-        throw new BadRequestError(
-            "Server Controller Checks: please provide all values!"
-        );
+        throw new BadRequestError("Please provide all values!");
     }
 
     // create new job instance with userID set to what's passed in from request
@@ -29,9 +27,7 @@ const getAllJobs = async (req, res) => {
     const { status, jobType, sort } = req.query;
     let searchField = req.query.searchField;
     if (!status || !jobType || !sort) {
-        throw new BadRequestError(
-            "Server Controller Checks: required fields: status, jobType, and sort"
-        );
+        throw new BadRequestError("Required fields: status, jobType, and sort");
     }
 
     // build query object based on query string param
@@ -103,16 +99,14 @@ const updateJob = async (req, res) => {
 
     // check for company/position existence (echo front-end checks)
     if (!company || !position) {
-        throw new BadRequestError(
-            "Server Controller Checks: please provide all values!"
-        );
+        throw new BadRequestError("Please provide all values!");
     }
 
     // deal with job not found
     const job = await Job.findOne({ _id: jobId });
     if (!job) {
         throw new NotFoundError(
-            `Server Controller Checks: Job with ID ${jobId} cannot be found in database`
+            `Job with ID ${jobId} cannot be found in database`
         );
     }
 
@@ -134,7 +128,7 @@ const deleteJob = async (req, res) => {
     const job = await Job.findOne({ _id: jobId });
     if (!job) {
         throw new NotFoundError(
-            `Server Controller Checks: Job with ID ${jobId} cannot be found in database`
+            `Job with ID ${jobId} cannot be found in database`
         );
     }
     checkPermissions(req.user, job.createdBy);
