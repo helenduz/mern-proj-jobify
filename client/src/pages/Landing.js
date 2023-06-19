@@ -13,15 +13,27 @@ const Landing = () => {
                 <nav>
                     <Logo />
                 </nav>
-                <div className="container full-page">
+                <div className="container page">
                     <div className="info">
-                        <h1>Job Tracking App</h1>
-                        <p>Descriptions</p>
+                        <h1>
+                            Jobify: Your Personal <span>Job</span> Tracker
+                        </h1>
+                        <p>
+                            Hi, welcome to my job tracker project! This app is
+                            built with the{" "}
+                            <span className="description-hl">
+                                MERN (MongoDB, Express, React, NodeJS) stack
+                            </span>
+                            . Featuring a JWT user auth system, usage of advance
+                            React concepts like context/reducer, and implemented
+                            with modern best practices of full-stack
+                            applications, this project has been my favorite so
+                            far. Enjoy! &#128151;
+                        </p>
                         <Link to="/register" className="btn btn-hero">
                             Login/Register
                         </Link>
                     </div>
-
                     <img
                         src={main}
                         alt="job hunt image"
